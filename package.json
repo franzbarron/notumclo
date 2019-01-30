@@ -1,0 +1,8 @@
+{
+    "name": "notumclo",
+    "description": "TBA",
+    "authors": "Francisco Barrón",
+    "version": "1.0.0",
+    "main": "main.js",
+    "dependencies": {}
+}

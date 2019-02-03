@@ -8,13 +8,6 @@ const db = monk(process.env.SECRET || '127.0.0.1/notumclo');
 const posts = db.get('posts');
 
 app.use(cors());
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -36,7 +29,11 @@ function isValidPost(post) {
     return post.textTitle && post.textContent && post.textTags &&
         post.textTitle.toString().trim() !== '' &&
         post.textContent.toString().trim() !== '' &&
-        post.textTags.toString().trim() !== ''
+        post.textTags.toString().trim() !== '';
+  else if (post.type === 'image')
+    return post.imageFile && post.imageCaption && post.imageTags &&
+        post.imageCaption.toString().trim() !== '' &&
+        post.imageTags.toString().trim() !== '';
 }
 
 function parsePost(post) {
@@ -46,6 +43,14 @@ function parsePost(post) {
       content: post.textContent.toString(),
       tags: post.textTags.toString(),
       type: 'text',
+      created: new Date()
+    };
+  else if (post.type === 'image')
+    return {
+      file: post.imageFile,
+      caption: post.imageCaption.toString(),
+      tags: post.imageTags.toString(),
+      type: 'image',
       created: new Date()
     };
 }

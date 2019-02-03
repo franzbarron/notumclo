@@ -22,45 +22,45 @@
   <body>
     <div class="container-fluid text-center">
       <h1>notumclo <small class="text-muted">Not a Tumblr Clone</small></h1>
-      <div class="row">
-        <div class="col-sm"></div>
-        <div class="col-sm">
-          <span class="clickable" onclick="postTextForm()"
-            ><i class="fas fa-font fa-3x"></i><br />Text</span
-          >
-        </div>
-        <div class="col-sm">
-          <span class="clickable"
-            ><i class="fas fa-image fa-3x"></i><br />Image</span
-          >
-        </div>
-        <div class="col-sm">
-          <span class="clickable"
-            ><i class="fas fa-quote-right fa-3x"></i><br />Quote</span
-          >
-        </div>
-        <div class="col-sm">
-          <span class="clickable"
-            ><i class="fas fa-link fa-3x"></i><br />Link</span
-          >
-        </div>
-        <div class="col-sm">
-          <span class="clickable"
-            ><i class="fas fa-comment-alt fa-3x"></i><br />Chat</span
-          >
-        </div>
-        <div class="col-sm">
-          <span class="clickable"
-            ><i class="fas fa-headphones-alt fa-3x"></i><br />Audio</span
-          >
-        </div>
-        <div class="col-sm">
-          <span class="clickable">
-            <i class="fas fa-video fa-3x"></i><br />Video</span
-          >
-        </div>
-        <div class="col-sm"></div>
+    </div>
+    <div class="row" id="postOptions">
+      <div class="col-sm"></div>
+      <div class="col-sm">
+        <span class="clickable" onclick="postTextForm()"
+          ><i class="fas fa-font fa-3x"></i><br />Text</span
+        >
       </div>
+      <div class="col-sm">
+        <span class="clickable" onclick="postImageForm()"
+          ><i class="fas fa-image fa-3x"></i><br />Image</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable"
+          ><i class="fas fa-quote-right fa-3x"></i><br />Quote</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable"
+          ><i class="fas fa-link fa-3x"></i><br />Link</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable"
+          ><i class="fas fa-comment-alt fa-3x"></i><br />Chat</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable"
+          ><i class="fas fa-headphones-alt fa-3x"></i><br />Audio</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable">
+          <i class="fas fa-video fa-3x"></i><br />Video</span
+        >
+      </div>
+      <div class="col-sm"></div>
     </div>
     <div id="forms" class="container-fluid" style="width: 75%">
       <form id="textForm" name="textForm" style="display: none;">
@@ -95,6 +95,48 @@
           />
         </div>
         <button type="submit" class="btn btn-primary">Post</button>
+        <button type="button" class="btn btn-secondary btn-cancel">
+          Discard
+        </button>
+      </form>
+      <div id="preview" style="text-align: center">
+        <img src="" class="img-fluid" id="thumbnail" style="max-height:28em;">
+      </div>
+      <form id="imageForm" name="imageForm" style="display: none;">
+        <div class="form-group custom-file" id="fileFormGoup">
+          <input
+            type="file"
+            name="imageFile"
+            id="imageFile"
+            class="custom-file-input"
+            accept="image/*"
+          />
+          <label class="custom-file-label" for="imageFile">Choose file</label>
+        </div>
+        <div class="form-group">
+          <label for="imageCaption">Caption</label>
+          <textarea
+            class="form-control"
+            name="imageCaption"
+            id="imageCaption"
+            rows="3"
+            placeholder="Add a caption"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="imageTags">Tags</label>
+          <input
+            type="text"
+            class="form-control"
+            name="imageTags"
+            id="imageTags"
+            placeholder="#tags"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <button type="button" class="btn btn-secondary btn-cancel">
+          Discard
+        </button>
       </form>
     </div>
     <div id="postsFeed" class="container"></div>

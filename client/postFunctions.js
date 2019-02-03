@@ -36,7 +36,7 @@ function listAllPosts() {
         const img = new Image();
         img.src = post.file;
         img.classList.add('img-fluid');
-        img.setAttribute('style', 'max-height: 14em;');
+        img.setAttribute('style', 'max-height: 28em;');
         const caption = document.createElement('p');
         caption.textContent = post.caption;
         const tags = document.createElement('p');
@@ -46,6 +46,28 @@ function listAllPosts() {
 
         div.appendChild(img);
         div.appendChild(caption);
+        div.appendChild(tags);
+        div.appendChild(date);
+
+        postsElement.appendChild(div);
+      } else if (post.type === 'quote') {
+        const div = document.createElement('div');
+        const blockQuote = document.createElement('blockquote');
+        const content = document.createElement('p');
+        content.classList.add('mb-0');
+        content.textContent = post.content;
+        const source = document.createElement('footer');
+        source.classList.add('blockquote-footer');
+        source.textContent = post.source;
+        blockQuote.appendChild(content);
+        blockQuote.appendChild(source);
+
+        const tags = document.createElement('p');
+        tags.textContent = post.tags;
+        const date = document.createElement('small');
+        date.textContent = new Date(post.created);
+
+        div.appendChild(blockQuote);
         div.appendChild(tags);
         div.appendChild(date);
 
@@ -71,6 +93,7 @@ function postImageForm() {
     const imageTags = imageData.get('imageTags');
     const postData = {imageFile, imageCaption, imageTags, type: 'image'};
     imageForm.style.display = 'none';
+    preview.style.display = 'none';
     postOptions.style.display = '';
     fetch(API_URL, {
       method: 'POST',
@@ -79,7 +102,7 @@ function postImageForm() {
     })
         .then(response => response.json())
         .then(createdPost => {
-          textForm.reset();
+          imageForm.reset();
           listAllPosts();
         });
   });
@@ -104,6 +127,45 @@ function postImageForm() {
     preview.style.display = 'none';
     // while (preview.firstChild) preview.removeChild(preview.firstChild);
     imageForm.reset();
+  };
+}
+
+function postQuoteForm() {
+  const quoteForm = document.querySelector('#quoteForm');
+  postOptions.style.display = 'none';
+  quoteForm.style.display = '';
+  const quoteContent = document.querySelector('#quoteContent');
+  quoteContent.oninput = () => {
+    quoteContent.style.height = '';
+    quoteContent.style.height =
+        Math.min(quoteContent.scrollHeight, 82) * 1.1 + 'px';
+  };
+  quoteForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const quoteData = new FormData(quoteForm);
+    const quoteContent = quoteData.get('quoteContent');
+    const quoteSource = quoteData.get('quoteSource');
+    const quoteTags = quoteData.get('quoteTags');
+    const postData = {quoteContent, quoteSource, quoteTags, type: 'quote'};
+    quoteForm.style.display = 'none';
+    postOptions.style.display = '';
+
+    fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(postData),
+      headers: {'content-type': 'application/json'}
+    })
+        .then(response => response.json())
+        .then(createdPost => {
+          quoteForm.reset();
+          listAllPosts();
+        });
+  });
+
+  cancelButton[0].onclick = () => {
+    postOptions.style.display = '';
+    quoteForm.style.display = 'none';
+    quoteForm.reset();
   };
 }
 

@@ -34,6 +34,11 @@ function isValidPost(post) {
     return post.imageFile && post.imageCaption && post.imageTags &&
         post.imageCaption.toString().trim() !== '' &&
         post.imageTags.toString().trim() !== '';
+  else if (post.type === 'quote')
+    return post.quoteContent && post.quoteSource && post.quoteTags &&
+        post.quoteContent.toString().trim() !== '' &&
+        post.quoteSource.toString().trim() !== '' &&
+        post.quoteTags.toString().trim() !== '';
 }
 
 function parsePost(post) {
@@ -51,6 +56,14 @@ function parsePost(post) {
       caption: post.imageCaption.toString(),
       tags: post.imageTags.toString(),
       type: 'image',
+      created: new Date()
+    };
+  else if (post.type === 'quote')
+    return {
+      content: post.quoteContent.toString(),
+      source: post.quoteSource.toString(),
+      tags: post.quoteTags.toString(),
+      type: 'quote',
       created: new Date()
     };
 }

@@ -36,7 +36,7 @@
         >
       </div>
       <div class="col-sm">
-        <span class="clickable"
+        <span class="clickable" onclick="postQuoteForm()"
           ><i class="fas fa-quote-right fa-3x"></i><br />Quote</span
         >
       </div>
@@ -100,7 +100,7 @@
         </button>
       </form>
       <div id="preview" style="text-align: center">
-        <img src="" class="img-fluid" id="thumbnail" style="max-height:28em;">
+        <img src="" class="img-fluid" id="thumbnail" style="max-height:28em;" />
       </div>
       <form id="imageForm" name="imageForm" style="display: none;">
         <div class="form-group custom-file" id="fileFormGoup">
@@ -130,6 +130,42 @@
             class="form-control"
             name="imageTags"
             id="imageTags"
+            placeholder="#tags"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <button type="button" class="btn btn-secondary btn-cancel">
+          Discard
+        </button>
+      </form>
+      <form id="quoteForm" name="quoteForm" style="display:none;">
+        <div class="form-group">
+          <label for="quoteContent">Quote</label>
+          <textarea
+            name="quoteContent"
+            id="quoteContent"
+            rows="1"
+            class="form-control"
+            placeholder="Quote"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="quoteSource">Source</label>
+          <input
+            type="text"
+            name="quoteSource"
+            id="quoteSource"
+            class="form-control"
+            placeholder="Source"
+          />
+        </div>
+        <div class="form-group">
+          <label for="quoteTags">Tags</label>
+          <input
+            type="text"
+            name="quoteTags"
+            id="quoteTags"
+            class="form-control"
             placeholder="#tags"
           />
         </div>

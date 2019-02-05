@@ -1,14 +1,22 @@
 const cors = require('cors');
 const express = require('express');
+const fs = require('fs');
 const monk = require('monk');
+const multer = require('multer');
+const path = require('path');
 const rateLimit = require('express-rate-limit');
 
 const app = express();
 const db = monk(process.env.SECRET || '127.0.0.1/notumclo');
+const handleError = (err, res) => {
+  res.status(500).contentType('text/plain').end('Oops! Something went wrong!');
+};
 const posts = db.get('posts');
+const upload = multer({dest: '/server'}) 
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('img')); 
 
 app.get('/', (req, res) => {
   res.json({message: 'notumclo'});
@@ -18,7 +26,7 @@ app.get('/posts', (req, res) => {
   posts.find().then(posts => {
     res.json(posts);
   });
-})
+});
 
 app.listen(5000, () => {
   console.log('Listening on http://127.0.0.1:5000');
@@ -31,7 +39,8 @@ function isValidPost(post) {
         post.textContent.toString().trim() !== '' &&
         post.textTags.toString().trim() !== '';
   else if (post.type === 'image')
-    return post.imageFile && post.imageCaption && post.imageTags &&
+    return post.ImgURL && post.imageCaption && post.imageTags &&
+        post.ImgURL.toString().trim() !== '' &&
         post.imageCaption.toString().trim() !== '' &&
         post.imageTags.toString().trim() !== '';
   else if (post.type === 'quote')
@@ -52,7 +61,7 @@ function parsePost(post) {
     };
   else if (post.type === 'image')
     return {
-      file: post.imageFile,
+      file: post.ImgURL.toString(),
       caption: post.imageCaption.toString(),
       tags: post.imageTags.toString(),
       type: 'image',
@@ -67,6 +76,21 @@ function parsePost(post) {
       created: new Date()
     };
 }
+
+app.post('/img', upload.single('file'), (req, res) => {
+  const Fname = Date.now() + path.extname(req.file.originalname).toLowerCase()
+  const tempPath = req.file.path;
+  console.log(tempPath);
+  const targetPath = path.join(__dirname, '/img/' + Fname);
+  console.log(targetPath);
+  
+  console.log(req.body);
+  fs.rename(tempPath, targetPath, err => {
+    if (err) return handleError(err, res);
+
+    res.status(200).contentType('text/plain').end(Fname);
+  });
+});
 
 app.use(rateLimit({windowMs: 10 * 60 * 1000, max: 6}));
 

@@ -1,6 +1,8 @@
 const API_URL = window.location.hostname === '127.0.0.1' ?
-    'http://127.0.0.1:5000/posts' :
-    'https://notumclo-api.glitch.me/posts';
+    'http://127.0.0.1:5000/' :
+    'https://notumclo-api.glitch.me/';
+const POSTS_URL = API_URL + 'posts';
+const IMG_URL = API_URL + 'img';
 const postsElement = document.querySelector('#postsFeed');
 const postOptions = document.querySelector('#postOptions');
 const cancelButton = document.querySelectorAll('.btn-cancel');
@@ -8,72 +10,118 @@ const cancelButton = document.querySelectorAll('.btn-cancel');
 listAllPosts();
 
 function listAllPosts() {
-  // postsElement.innerHTML = '';
   while (postsElement.firstChild)
     postsElement.removeChild(postsElement.firstChild);
-  fetch(API_URL).then(response => response.json()).then(posts => {
-    posts.reverse();
-    posts.forEach(post => {
-      if (post.type === 'text') {
-        const div = document.createElement('div');
-        const header = document.createElement('h3');
-        header.textContent = post.title;
-        const content = document.createElement('p');
-        content.textContent = post.content;
-        const tags = document.createElement('p');
-        tags.textContent = post.tags;
-        const date = document.createElement('small');
-        date.textContent = new Date(post.created);
+  fetch(POSTS_URL).then(response => response.json()).then(posts => {
+    if (posts.length === 0) {
+      const div = document.createElement('div');
+      div.classList.add('card');
+      const cardBody = document.createElement('div');
+      cardBody.classList.add('card-body');
+      const txt = document.createElement('p');
+      txt.classList.add('card-text');
+      txt.textContent = 'No posts available';
 
-        div.appendChild(header);
-        div.appendChild(content);
-        div.appendChild(tags);
-        div.appendChild(date);
+      cardBody.appendChild(txt);
+      div.appendChild(cardBody);
+      postsElement.appendChild(div);
+    } else {
+      posts.reverse();
+      posts.forEach(post => {
+        if (post.type === 'text') {
+          const div = document.createElement('div');
+          div.classList.add('card');
+          const cardBody = document.createElement('div');
+          cardBody.classList.add('card-body');
+          const footer = document.createElement('div');
+          footer.classList.add('card-footer');
 
-        postsElement.appendChild(div);
-      } else if (post.type === 'image') {
-        const div = document.createElement('div');
-        const img = new Image();
-        img.src = post.file;
-        img.classList.add('img-fluid');
-        img.setAttribute('style', 'max-height: 28em;');
-        const caption = document.createElement('p');
-        caption.textContent = post.caption;
-        const tags = document.createElement('p');
-        tags.textContent = post.tags;
-        const date = document.createElement('small');
-        date.textContent = new Date(post.created);
+          const header = document.createElement('h3');
+          header.classList.add('card-title');
+          header.textContent = post.title;
+          const content = document.createElement('p');
+          content.classList.add('card-text');
+          content.textContent = post.content;
 
-        div.appendChild(img);
-        div.appendChild(caption);
-        div.appendChild(tags);
-        div.appendChild(date);
+          const tags = document.createElement('p');
+          tags.textContent = post.tags;
+          const date = document.createElement('small');
+          date.classList.add('text-muted');
+          date.textContent = new Date(post.created);
 
-        postsElement.appendChild(div);
-      } else if (post.type === 'quote') {
-        const div = document.createElement('div');
-        const blockQuote = document.createElement('blockquote');
-        const content = document.createElement('p');
-        content.classList.add('mb-0');
-        content.textContent = post.content;
-        const source = document.createElement('footer');
-        source.classList.add('blockquote-footer');
-        source.textContent = post.source;
-        blockQuote.appendChild(content);
-        blockQuote.appendChild(source);
+          cardBody.appendChild(header);
+          cardBody.appendChild(content);
+          footer.appendChild(tags);
+          footer.appendChild(date);
+          div.appendChild(cardBody);
+          div.appendChild(footer);
 
-        const tags = document.createElement('p');
-        tags.textContent = post.tags;
-        const date = document.createElement('small');
-        date.textContent = new Date(post.created);
+          postsElement.appendChild(div);
+        } else if (post.type === 'image') {
+          const div = document.createElement('div');
+          div.classList.add('card');
+          div.classList.add('img-fluid');
+          const cardBody = document.createElement('div');
+          cardBody.classList.add('card-body');
+          const footer = document.createElement('div');
+          footer.classList.add('card-footer');
 
-        div.appendChild(blockQuote);
-        div.appendChild(tags);
-        div.appendChild(date);
+          const img = new Image();
+          img.src = post.file;
+          img.classList.add('card-img-top');
 
-        postsElement.appendChild(div);
-      }
-    });
+          const caption = document.createElement('p');
+          caption.classList.add('card-text');
+          caption.textContent = post.caption;
+
+          const tags = document.createElement('p');
+          tags.textContent = post.tags;
+          const date = document.createElement('small');
+          date.classList.add('text-muted');
+          date.textContent = new Date(post.created);
+
+          div.appendChild(img);
+          cardBody.appendChild(caption);
+          footer.appendChild(tags);
+          footer.appendChild(date);
+          div.appendChild(cardBody);
+          div.appendChild(footer);
+
+          postsElement.appendChild(div);
+        } else if (post.type === 'quote') {
+          const div = document.createElement('div');
+          div.classList.add('card');
+          const cardBody = document.createElement('div');
+          cardBody.classList.add('card-body');
+          const footer = document.createElement('div');
+          footer.classList.add('card-footer');
+
+          const blockQuote = document.createElement('blockquote');
+          const content = document.createElement('p');
+          content.classList.add('mb-0');
+          content.textContent = post.content;
+          const source = document.createElement('footer');
+          source.classList.add('blockquote-footer');
+          source.textContent = post.source;
+          blockQuote.appendChild(content);
+          blockQuote.appendChild(source);
+
+          const tags = document.createElement('p');
+          tags.textContent = post.tags;
+          const date = document.createElement('small');
+          date.classList.add('text-muted');
+          date.textContent = new Date(post.created);
+
+          cardBody.appendChild(blockQuote);
+          footer.appendChild(tags);
+          footer.appendChild(date);
+          div.appendChild(cardBody);
+          div.appendChild(footer);
+
+          postsElement.appendChild(div);
+        }
+      });
+    }
   });
 }
 
@@ -87,23 +135,34 @@ function postImageForm() {
   imageForm.style.display = '';
   imageForm.addEventListener('submit', event => {
     event.preventDefault();
+    const FileForm = new FormData();
+    FileForm.append('file', imageInput.files[0]);
     const imageData = new FormData(imageForm);
-    const imageFile = imageDataURL;
     const imageCaption = imageData.get('imageCaption');
     const imageTags = imageData.get('imageTags');
-    const postData = {imageFile, imageCaption, imageTags, type: 'image'};
+    fileFormGoup.style.display = '';
     imageForm.style.display = 'none';
-    preview.style.display = 'none';
     postOptions.style.display = '';
-    fetch(API_URL, {
+    preview.style.display = 'none';
+    imageForm.reset();
+    fetch(IMG_URL, {
       method: 'POST',
-      body: JSON.stringify(postData),
-      headers: {'content-type': 'application/json'}
+      body: FileForm,
     })
-        .then(response => response.json())
-        .then(createdPost => {
-          imageForm.reset();
-          listAllPosts();
+    .then(response => response.text())
+    .then(response => {
+      const ImgURL = API_URL + response;
+      const postData = {ImgURL, imageCaption, imageTags, type: 'image'};
+          fetch(POSTS_URL, {
+            method: 'POST',
+            body: JSON.stringify(postData),
+            headers: {'content-type': 'application/json'}
+          })
+              .then(response => response.json())
+              .then(createdPost => {
+                imageForm.reset();
+                listAllPosts();
+              });
         });
   });
 
@@ -125,7 +184,6 @@ function postImageForm() {
     fileFormGoup.style.display = '';
     imageForm.style.display = 'none';
     preview.style.display = 'none';
-    // while (preview.firstChild) preview.removeChild(preview.firstChild);
     imageForm.reset();
   };
 }
@@ -150,7 +208,7 @@ function postQuoteForm() {
     quoteForm.style.display = 'none';
     postOptions.style.display = '';
 
-    fetch(API_URL, {
+    fetch(POSTS_URL, {
       method: 'POST',
       body: JSON.stringify(postData),
       headers: {'content-type': 'application/json'}
@@ -162,7 +220,7 @@ function postQuoteForm() {
         });
   });
 
-  cancelButton[0].onclick = () => {
+  cancelButton[2].onclick = () => {
     postOptions.style.display = '';
     quoteForm.style.display = 'none';
     quoteForm.reset();
@@ -183,7 +241,7 @@ function postTextForm() {
     textForm.style.display = 'none';
     postOptions.style.display = '';
 
-    fetch(API_URL, {
+    fetch(POSTS_URL, {
       method: 'POST',
       body: JSON.stringify(postData),
       headers: {'content-type': 'application/json'}

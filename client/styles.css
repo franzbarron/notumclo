@@ -1,3 +1,15 @@
 .clickable {
   cursor: pointer;
 }
+
+.card {
+  margin: 1%;
+}
+
+#postsFeed {
+  max-width: 800px;
+}
+
+#postOptions {
+  max-width: 100%;
+}

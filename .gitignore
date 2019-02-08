@@ -62,3 +62,7 @@ typings/
 
 # static img folder
 img/
+
+# local bootstrap and fontawesome
+css/
+webfonts/

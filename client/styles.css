@@ -13,3 +13,12 @@
 #postOptions {
   max-width: 100%;
 }
+
+.tag-link {
+  margin-left: 0.5rem;
+}
+
+#site-title {
+  color: inherit;
+  text-decoration: none;
+}

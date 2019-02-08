@@ -80,15 +80,26 @@ function parsePost(post) {
 app.post('/img', upload.single('file'), (req, res) => {
   const Fname = Date.now() + path.extname(req.file.originalname).toLowerCase()
   const tempPath = req.file.path;
-  console.log(tempPath);
   const targetPath = path.join(__dirname, '/img/' + Fname);
-  console.log(targetPath);
   
-  console.log(req.body);
   fs.rename(tempPath, targetPath, err => {
     if (err) return handleError(err, res);
 
     res.status(200).contentType('text/plain').end(Fname);
+  });
+});
+
+app.post('/tag', (req, res) => {
+  let body = '(#';
+  req.on('data', chunk => {
+    body += chunk.toString();
+  });
+  req.on('end', () => {
+    body += ')';
+    regex = new RegExp(body, 'i');
+    posts.find({'tags': {$regex: regex}}).then(posts => {
+      res.json(posts);
+    });
   });
 });
 

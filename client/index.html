@@ -19,8 +19,8 @@
       crossorigin="anonymous"
     /> -->
     <!-- local bootstrap and fontawesome -->
-    <link rel="stylesheet" href="css/all.css">
-    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/all.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
   </head>
   <body>
     <div class="container-fluid text-center">
@@ -45,16 +45,11 @@
       </div>
       <div class="col-sm">
         <span class="clickable"
-          ><i class="fas fa-link fa-3x"></i><br />Link</span
-        >
-      </div>
-      <div class="col-sm">
-        <span class="clickable"
           ><i class="fas fa-comment-alt fa-3x"></i><br />Chat</span
         >
       </div>
       <div class="col-sm">
-        <span class="clickable"
+        <span class="clickable" onclick="postAudioFunction()"
           ><i class="fas fa-headphones-alt fa-3x"></i><br />Audio</span
         >
       </div>
@@ -141,7 +136,7 @@
           Discard
         </button>
       </form>
-      <form id="quoteForm" name="quoteForm" style="display:none;">
+      <form id="quoteForm" name="quoteForm" style="display: none;">
         <div class="form-group">
           <label for="quoteContent">Quote</label>
           <textarea
@@ -176,6 +171,66 @@
         <button type="button" class="btn btn-secondary btn-cancel">
           Discard
         </button>
+      </form>
+      <div class="form-group" id="audioTitleInput" style="display: none;">
+        <label for="audioTitle">Song Title</label>
+        <input
+          type="text"
+          name="audioTitle"
+          id="audioTitle"
+          class="form-control"
+          placeholder="Search for a song"
+        />
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="hideInputElement(document.querySelector('#audioTitleInput'))"
+        >
+          Discard
+        </button>
+      </div>
+      <div class="text-center" id="loadingSpinner" style="display: none;">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <form id="audioForm" style="display: none;">
+        <div
+          id="playButton"
+          class="embed-responsive embed-responsive-1by1 mx-auto"
+          style="display: none; max-width: 50%;"
+        >
+          <iframe
+            src=""
+            id="SpotifyIframe"
+            frameborder="0"
+            class="embed-responsive-item"
+            allowtransparency="true"
+            allow="encrypted-media"
+          ></iframe>
+        </div>
+        <div class="form-group">
+          <label for="audioDescription">Description</label>
+          <textarea
+            name="audioDescription"
+            id="audioDescription"
+            rows="3"
+            class="form-control"
+            placeholder="Add a description"
+          ></textarea>
+          <label for="audioTags">Tags</label>
+          <input
+            type="text"
+            name="audioTags"
+            id="audioTags"
+            class="form-control"
+            placeholder="Add a description"
+          />
+          <button type="submit" class="btn btn-primary">Post</button>
+          <button type="button" class="btn btn-secondary btn-cancel">
+            Discard
+          </button>
+        </div>
       </form>
     </div>
     <div id="postsFeed" class="container"></div>

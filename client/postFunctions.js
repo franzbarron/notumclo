@@ -146,10 +146,145 @@ function listAllPosts() {
             div.appendChild(footer);
 
             postsElement.appendChild(div);
+          } else if(post.type === 'audio') {
+            const div = document.createElement('div');
+            div.classList.add('card');
+            const cardBody = document.createElement('div');
+            cardBody.classList.add('card-body');
+            const footer = document.createElement('div');
+            footer.classList.add('card-footer');
+
+            const FrameContainer = document.createElement('div');
+            FrameContainer.classList.add('embed-responsive')
+            FrameContainer.classList.add('embed-responsive-1by1');
+            const SpotifyFrame = document.createElement('iframe');
+            SpotifyFrame.classList.add('embed-responsive-item');
+            SpotifyFrame.setAttribute('allow', 'encrypted-media');
+            SpotifyFrame.setAttribute('allowtransparency', 'true');
+            SpotifyFrame.setAttribute('src', post.source);
+            FrameContainer.appendChild(SpotifyFrame);
+            const Description = document.createElement('p');
+            Description.textContent = post.description;
+
+            const tagsP = document.createElement('p');
+            const postTags = post.tags.split(' ');
+            postTags.forEach(tag => {
+              const tags = document.createElement('a');
+              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
+              tags.classList.add('tag-link');
+              tags.textContent = tag;
+              tagsP.appendChild(tags);
+            });
+            const date = document.createElement('small');
+            date.classList.add('text-muted');
+            date.textContent = new Date(post.created);
+
+            cardBody.appendChild(FrameContainer);
+            cardBody.appendChild(Description);
+            footer.appendChild(tagsP);
+            footer.appendChild(date);
+            div.appendChild(cardBody);
+            div.appendChild(footer);
+
+            postsElement.appendChild(div);
           }
         });
       }
     });
+}
+
+function hideInputElement(elem) {
+  elem.value = '';
+  elem.style.display = 'none';
+  postOptions.style.display = '';
+}
+
+function postAudioFunction() {
+  const audioForm = document.querySelector('#audioForm');
+  const AudioTitleInput = document.querySelector('#audioTitleInput');
+  const ButtonPlay = document.querySelector('#playButton');
+  const LoadingSpinner = document.querySelector('#loadingSpinner');
+  const titleInput = document.querySelector('#audioTitle');
+
+  let PlayButtonSrc;
+  let accessToken;
+
+  AudioTitleInput.style.display = '';
+  postOptions.style.display = 'none';
+
+  titleInput.addEventListener('change', event => {
+    const SpotifyAPI =
+      'https://api.spotify.com/v1/search?type=track&market=MX&limit=10&q=';
+    const query = titleInput.value.replace(/\s/g, '%20');
+
+    LoadingSpinner.style.display = '';
+    AudioTitleInput.style.display = 'none';
+
+    fetch(API_URL + 'spotify')
+      .then(response => response.json())
+      .then(token => {
+        accessToken = token.access_token;
+
+        fetch(SpotifyAPI + query, {
+          method: 'GET',
+          headers: {
+            Authorization: 'Bearer ' + accessToken
+          }
+        })
+          .then(response => response.json())
+          .then(track => {
+            const frame = document.querySelector('#SpotifyIframe');
+
+            document.querySelector('#audioTitle').value = '';
+
+            PlayButtonSrc =
+              'https://open.spotify.com/embed/track/' +
+              track.tracks.items[0].uri.replace('spotify:track:', '');
+
+            frame.setAttribute('src', PlayButtonSrc);
+            ButtonPlay.appendChild(frame);
+
+            frame.addEventListener('load', () => {
+              ButtonPlay.style.display = '';
+              LoadingSpinner.style.display = 'none';
+              audioForm.style.display = '';
+            });
+          });
+      });
+  });
+
+  audioForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const AudioData = new FormData(audioForm);
+    const AudioDescription = AudioData.get('audioDescription');
+    const AudioTags = AudioData.get('audioTags');
+    const PostData = { PlayButtonSrc, AudioDescription, AudioTags, type: 'audio' };
+
+    audioForm.style.display = 'none';
+    postOptions.style.display = '';
+
+    fetch(POSTS_URL, {
+      method: 'POST',
+      body: JSON.stringify(PostData),
+      headers: { 'content-type': 'application/json' }
+    })
+      .then(response => response.json())
+      .then(createdPost => {
+        audioForm.reset();
+        listAllPosts();
+      })
+      .then(response => response.json())
+      .then(createdPost => {
+        audioForm.reset();
+        listAllPosts();
+      });
+  });
+
+  cancelButton[3].onclick = () => {
+    postOptions.style.display = '';
+    audioForm.style.display = 'none';
+    audioForm.reset();
+  };
 }
 
 function postImageForm() {
@@ -158,8 +293,8 @@ function postImageForm() {
   const imageInput = document.querySelector('#imageFile');
   const fileFormGoup = document.querySelector('#fileFormGoup');
   let imageDataURL;
-  postOptions.style.display = 'none';
   imageForm.style.display = '';
+  postOptions.style.display = 'none';
   imageForm.addEventListener('submit', event => {
     event.preventDefault();
     const FileForm = new FormData();

@@ -1,4 +1,4 @@
-# notumclo | not a tumnblr clone
+# notumclo | not a tumblr clone
 
 notumclo is a tumblr clone built to demonstrate the fullstack (server, client,
 database).
@@ -8,13 +8,12 @@ database).
 ### Current
 
 - Users can create posts
-  - Posts may be Text, Picture, or Quote
+  - Posts may be Text, Picture, Quote, or Audio
 - Users may add tags to posts to group topics together
 
 ### Future
 
 - Missing post types available in tumblr:
-  - Link
   - Chat
   - Audio
   - Video

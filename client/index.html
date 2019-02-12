@@ -49,12 +49,12 @@
         >
       </div>
       <div class="col-sm">
-        <span class="clickable" onclick="postAudioFunction()"
+        <span class="clickable" onclick="postAudioForm()"
           ><i class="fas fa-headphones-alt fa-3x"></i><br />Audio</span
         >
       </div>
       <div class="col-sm">
-        <span class="clickable">
+        <span class="clickable" onclick="postVideoForm()">
           <i class="fas fa-video fa-3x"></i><br />Video</span
         >
       </div>
@@ -179,8 +179,10 @@
           name="audioTitle"
           id="audioTitle"
           class="form-control"
-          placeholder="Search for a song"
-        />
+          placeholder="Search for a song (add artist and/or album for better results)"
+        /><button type="button" class="btn btn-primary">
+          Next
+        </button>
         <button
           type="button"
           class="btn btn-secondary"
@@ -228,6 +230,60 @@
           />
           <button type="submit" class="btn btn-primary">Post</button>
           <button type="button" class="btn btn-secondary btn-cancel">
+            Discard
+          </button>
+        </div>
+      </form>
+      <div class="form-group" id="video-url" style="display: none;">
+        <label for="video-url-input">Video URL</label>
+        <input
+          type="text"
+          name="video-url-input"
+          id="video-url-input"
+          class="form-control"
+          placeholder="Insert YouTube URL"
+        />
+        <button class="btn btn-primary" type="button">Next</button>
+        <button
+          class="btn btn-secondary"
+          onclick="hideInputElement(document.querySelector('#video-url'))"
+        >
+          Discard
+        </button>
+      </div>
+      <form id="video-form" style="display: none;">
+        <div
+          id="embeded-video"
+          class="embed-responsive embed-responsive-16by9 mx-auto"
+          style="display:none; max-width: 50%"
+        >
+          <iframe
+            src=""
+            id="youtube-iframe"
+            class="embed-responsive-item"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="form-group">
+          <label for="video-description">Description</label>
+          <textarea
+            name="video-description"
+            id="video-description"
+            rows="3"
+            class="form-control"
+            placeholder="Add a description"
+          ></textarea>
+          <label for="video-tags">Tags</label
+          ><input
+            type="text"
+            name="video-tags"
+            id="video-tags"
+            class="form-control"
+            placeholder="#tags"
+          />
+          <button class="btn btn-primary" type="submit">Post</button>
+          <button class="btn btn-secondary btn-cancel" type="button">
             Discard
           </button>
         </div>

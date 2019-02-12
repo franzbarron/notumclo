@@ -149,6 +149,47 @@ function listResutls() {
               div.appendChild(footer);
   
               postsFeed.appendChild(div);
+            } else if(post.type === 'audio') {
+              const div = document.createElement('div');
+              div.classList.add('card');
+              const cardBody = document.createElement('div');
+              cardBody.classList.add('card-body');
+              const footer = document.createElement('div');
+              footer.classList.add('card-footer');
+  
+              const FrameContainer = document.createElement('div');
+              FrameContainer.classList.add('embed-responsive')
+              FrameContainer.classList.add('embed-responsive-1by1');
+              const SpotifyFrame = document.createElement('iframe');
+              SpotifyFrame.classList.add('embed-responsive-item');
+              SpotifyFrame.setAttribute('allow', 'encrypted-media');
+              SpotifyFrame.setAttribute('allowtransparency', 'true');
+              SpotifyFrame.setAttribute('src', post.source);
+              FrameContainer.appendChild(SpotifyFrame);
+              const Description = document.createElement('p');
+              Description.textContent = post.description;
+  
+              const tagsP = document.createElement('p');
+              const postTags = post.tags.split(' ');
+              postTags.forEach(tag => {
+                const tags = document.createElement('a');
+                tags.setAttribute('href', '/tags.html?' + tag.substring(1));
+                tags.classList.add('tag-link');
+                tags.textContent = tag;
+                tagsP.appendChild(tags);
+              });
+              const date = document.createElement('small');
+              date.classList.add('text-muted');
+              date.textContent = new Date(post.created);
+  
+              cardBody.appendChild(FrameContainer);
+              cardBody.appendChild(Description);
+              footer.appendChild(tagsP);
+              footer.appendChild(date);
+              div.appendChild(cardBody);
+              div.appendChild(footer);
+  
+              postsFeed.appendChild(div);
             }
           });
         }

@@ -20,7 +20,7 @@ const upload = multer({ dest: '/server' });
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('img'));
+app.use('/img', express.static('img'));
 
 app.get('/', (req, res) => {
   res.json({ message: 'notumclo' });
@@ -88,8 +88,16 @@ function isValidPost(post) {
       post.PlayButtonSrc &&
       post.AudioDescription &&
       post.AudioTags &&
-      post.AudioDescription.toString().trim !== '' &&
-      post.AudioTags.toString().trim !== ''
+      post.AudioDescription.toString().trim() !== '' &&
+      post.AudioTags.toString().trim() !== ''
+    );
+  else if (post.type === 'video')
+    return (
+      post.URL &&
+      post.VideoDescription &&
+      post.VideoTags &&
+      post.VideoDescription.toString().trim() !== '' &&
+      post.VideoTags.toString().trim() !== ''
     );
   else return false;
 }
@@ -125,6 +133,14 @@ function parsePost(post) {
       description: post.AudioDescription.toString(),
       tags: post.AudioTags.toString(),
       type: 'audio',
+      created: new Date()
+    };
+  else if (post.type === 'video')
+    return {
+      source: post.URL.toString(),
+      description: post.VideoDescription.toString(),
+      tags: post.VideoTags.toString(),
+      type: 'video',
       created: new Date()
     };
 }

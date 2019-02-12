@@ -3,7 +3,7 @@ const API_URL =
     ? 'http://127.0.0.1:5000/'
     : 'https://notumclo-api.glitch.me/';
 const POSTS_URL = API_URL + 'posts';
-const IMG_URL = API_URL + 'img';
+const IMG_URL = API_URL + 'img/';
 const postsElement = document.querySelector('#postsFeed');
 const postOptions = document.querySelector('#postOptions');
 const cancelButton = document.querySelectorAll('.btn-cancel');
@@ -44,7 +44,6 @@ function listAllPosts() {
             header.textContent = post.title;
             const content = document.createElement('p');
             content.classList.add('card-text');
-            content.setAttribute('style', 'white-space: pre-line;');
             content.textContent = post.content;
 
             const tagsP = document.createElement('p');
@@ -146,7 +145,7 @@ function listAllPosts() {
             div.appendChild(footer);
 
             postsElement.appendChild(div);
-          } else if(post.type === 'audio') {
+          } else if (post.type === 'audio') {
             const div = document.createElement('div');
             div.classList.add('card');
             const cardBody = document.createElement('div');
@@ -155,7 +154,7 @@ function listAllPosts() {
             footer.classList.add('card-footer');
 
             const FrameContainer = document.createElement('div');
-            FrameContainer.classList.add('embed-responsive')
+            FrameContainer.classList.add('embed-responsive');
             FrameContainer.classList.add('embed-responsive-1by1');
             const SpotifyFrame = document.createElement('iframe');
             SpotifyFrame.classList.add('embed-responsive-item');
@@ -163,6 +162,50 @@ function listAllPosts() {
             SpotifyFrame.setAttribute('allowtransparency', 'true');
             SpotifyFrame.setAttribute('src', post.source);
             FrameContainer.appendChild(SpotifyFrame);
+            const Description = document.createElement('p');
+            Description.textContent = post.description;
+
+            const tagsP = document.createElement('p');
+            const postTags = post.tags.split(' ');
+            postTags.forEach(tag => {
+              const tags = document.createElement('a');
+              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
+              tags.classList.add('tag-link');
+              tags.textContent = tag;
+              tagsP.appendChild(tags);
+            });
+            const date = document.createElement('small');
+            date.classList.add('text-muted');
+            date.textContent = new Date(post.created);
+
+            cardBody.appendChild(FrameContainer);
+            cardBody.appendChild(Description);
+            footer.appendChild(tagsP);
+            footer.appendChild(date);
+            div.appendChild(cardBody);
+            div.appendChild(footer);
+
+            postsElement.appendChild(div);
+          } else if (post.type === 'video') {
+            const div = document.createElement('div');
+            div.classList.add('card');
+            const cardBody = document.createElement('div');
+            cardBody.classList.add('card-body');
+            const footer = document.createElement('div');
+            footer.classList.add('card-footer');
+
+            const FrameContainer = document.createElement('div');
+            FrameContainer.classList.add('embed-responsive');
+            FrameContainer.classList.add('embed-responsive-16by9');
+            const YouTubeFrame = document.createElement('iframe');
+            YouTubeFrame.classList.add('embed-responsive-item');
+            YouTubeFrame.setAttribute(
+              'allow',
+              'accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture'
+            );
+            YouTubeFrame.setAttribute('allowfullscreen', 'true');
+            YouTubeFrame.setAttribute('src', post.source);
+            FrameContainer.appendChild(YouTubeFrame);
             const Description = document.createElement('p');
             Description.textContent = post.description;
 
@@ -199,7 +242,7 @@ function hideInputElement(elem) {
   postOptions.style.display = '';
 }
 
-function postAudioFunction() {
+function postAudioForm() {
   const audioForm = document.querySelector('#audioForm');
   const AudioTitleInput = document.querySelector('#audioTitleInput');
   const ButtonPlay = document.querySelector('#playButton');
@@ -258,7 +301,12 @@ function postAudioFunction() {
     const AudioData = new FormData(audioForm);
     const AudioDescription = AudioData.get('audioDescription');
     const AudioTags = AudioData.get('audioTags');
-    const PostData = { PlayButtonSrc, AudioDescription, AudioTags, type: 'audio' };
+    const PostData = {
+      PlayButtonSrc,
+      AudioDescription,
+      AudioTags,
+      type: 'audio'
+    };
 
     audioForm.style.display = 'none';
     postOptions.style.display = '';
@@ -273,11 +321,6 @@ function postAudioFunction() {
         audioForm.reset();
         listAllPosts();
       })
-      .then(response => response.json())
-      .then(createdPost => {
-        audioForm.reset();
-        listAllPosts();
-      });
   });
 
   cancelButton[3].onclick = () => {
@@ -313,7 +356,9 @@ function postImageForm() {
     })
       .then(response => response.text())
       .then(response => {
-        const ImgURL = API_URL + response;
+        const ImgURL = IMG_URL + response;
+        console.log(ImgURL);
+        
         const postData = { ImgURL, imageCaption, imageTags, type: 'image' };
         fetch(POSTS_URL, {
           method: 'POST',
@@ -423,5 +468,60 @@ function postTextForm() {
     postOptions.style.display = '';
     textForm.style.display = 'none';
     textForm.reset();
+  };
+}
+
+function postVideoForm() {
+  let EmbedURL = 'https://www.youtube.com/embed/';
+  const VideoURL = document.querySelector('#video-url');
+  const VideoURLInput = document.querySelector('#video-url-input');
+  const VideoForm = document.querySelector('#video-form');
+
+  postOptions.style.display = 'none';
+  VideoURL.style.display = '';
+
+  VideoURLInput.addEventListener('change', event => {
+    const YouTubeURL = new URL(VideoURLInput.value);
+
+    VideoForm.style.display = '';
+    VideoURL.style.display = 'none';
+    VideoURLInput.value = '';
+
+    EmbedURL += YouTubeURL.search.substring(3);
+    document.querySelector('#youtube-iframe').setAttribute('src', EmbedURL);
+    document.querySelector('#embeded-video').style.display = '';
+  });
+
+  VideoForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const VideoData = new FormData(VideoForm);
+    const VideoDescription = VideoData.get('video-description');
+    const VideoTags = VideoData.get('video-tags');
+    const PostData = {
+      URL: EmbedURL,
+      VideoDescription,
+      VideoTags,
+      type: 'video'
+    };
+
+    postOptions.style.display = '';
+    VideoForm.style.display = 'none';
+
+    fetch(POSTS_URL, {
+      method: 'POST',
+      body: JSON.stringify(PostData),
+      headers: { 'content-type': 'application/json' }
+    })
+      .then(response => response.json())
+      .then(createdPost => {
+        VideoForm.reset();
+        listAllPosts();
+      });
+  });
+
+  cancelButton[4].onclick = () => {
+    postOptions.style.display = '';
+    VideoForm.style.display = 'none';
+    VideoForm.reset();
   };
 }

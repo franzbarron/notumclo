@@ -44,7 +44,7 @@
         >
       </div>
       <div class="col-sm">
-        <span class="clickable"
+        <span class="clickable" onclick="postChatForm()"
           ><i class="fas fa-comment-alt fa-3x"></i><br />Chat</span
         >
       </div>
@@ -172,15 +172,44 @@
           Discard
         </button>
       </form>
-      <div class="form-group" id="audioTitleInput" style="display: none;">
-        <label for="audioTitle">Song Title</label>
-        <input
-          type="text"
-          name="audioTitle"
-          id="audioTitle"
-          class="form-control"
-          placeholder="Search for a song (add artist and/or album for better results)"
-        /><button type="button" class="btn btn-primary">
+      <form id="chat-form" name="chat-form" style="display: none;">
+        <div class="form-group">
+          <textarea
+            name="chat-content"
+            id="chat-content"
+            rows="5"
+            class="form-control card-body"
+            placeholder="Me: This is a chat
+          You: Nice"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="chat-tags">Tags</label>
+          <input
+            type="text"
+            name="chat-tags"
+            id="chat-tags"
+            class="form-control"
+            placeholder="#tags"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <button class="btn btn-secondary btn-cancel" type="button">
+          Discard
+        </button>
+      </form>
+      <div id="audioTitleInput" style="display: none;">
+        <div class="form-group">
+          <label for="audioTitle">Song Title</label>
+          <input
+            type="text"
+            name="audioTitle"
+            id="audioTitle"
+            class="form-control"
+            placeholder="Search for a song (add artist and/or album for better results)"
+          />
+        </div>
+        <button type="button" class="btn btn-primary">
           Next
         </button>
         <button
@@ -228,21 +257,23 @@
             class="form-control"
             placeholder="Add a description"
           />
-          <button type="submit" class="btn btn-primary">Post</button>
-          <button type="button" class="btn btn-secondary btn-cancel">
-            Discard
-          </button>
         </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <button type="button" class="btn btn-secondary btn-cancel">
+          Discard
+        </button>
       </form>
-      <div class="form-group" id="video-url" style="display: none;">
-        <label for="video-url-input">Video URL</label>
-        <input
-          type="text"
-          name="video-url-input"
-          id="video-url-input"
-          class="form-control"
-          placeholder="Insert YouTube URL"
-        />
+      <div id="video-url" style="display: none;">
+        <div class="form-group">
+          <label for="video-url-input">Video URL</label>
+          <input
+            type="text"
+            name="video-url-input"
+            id="video-url-input"
+            class="form-control"
+            placeholder="Insert YouTube URL"
+          />
+        </div>
         <button class="btn btn-primary" type="button">Next</button>
         <button
           class="btn btn-secondary"
@@ -282,11 +313,11 @@
             class="form-control"
             placeholder="#tags"
           />
-          <button class="btn btn-primary" type="submit">Post</button>
-          <button class="btn btn-secondary btn-cancel" type="button">
-            Discard
-          </button>
         </div>
+        <button class="btn btn-primary" type="submit">Post</button>
+        <button class="btn btn-secondary btn-cancel" type="button">
+          Discard
+        </button>
       </form>
     </div>
     <div id="postsFeed" class="container"></div>

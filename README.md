@@ -8,13 +8,13 @@ database).
 ### Current
 
 - Users can create posts
-  - Posts may be Text, Picture, Quote, Audio, or Video
+  - Posts may be Text, Picture, Quote, Audio, Video, or Chat
 - Users may add tags to posts to group topics together
 
 ### Future
 
 - Missing post types available in tumblr:
-  - Chat
+  - Link
 - Search for posts
 - User accounts
   - Sign Up and Login

@@ -230,6 +230,55 @@ function listAllPosts() {
             div.appendChild(footer);
 
             postsElement.appendChild(div);
+          } else if (post.type === 'chat') {
+            const lines = post.content.split('\n');
+            const speakers = [];
+            const messages = [];
+
+            lines.forEach(line => {
+              const SplitDone = line.split(':');
+              speakers.push(SplitDone[0]);
+              messages.push(SplitDone[1]);
+            });
+
+            const Div = document.createElement('div');
+            Div.classList.add('card');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const Footer = document.createElement('div');
+            Footer.classList.add('card-footer');
+
+            for(let i = 0; i < speakers.length; i++) {
+              const P = document.createElement('p');
+              const Speaker = document.createElement('span');
+              const BoldText = document.createElement('strong');
+              BoldText.textContent = speakers[i] + ':';
+              const Message = document.createElement('span');
+              Message.textContent = messages[i];
+              Speaker.appendChild(BoldText);
+              P.appendChild(Speaker);
+              P.appendChild(Message);
+
+              CardBody.appendChild(P);
+            }
+            const TagsP = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const Tags = document.createElement('a');
+              Tags.setAttribute('href', '/tags.html?' + tag.substring(1));
+              Tags.classList.add('tag-link');
+              Tags.textContent = tag + ' ';
+              TagsP.appendChild(Tags);
+            });
+            const date = document.createElement('small');
+            date.classList.add('text-muted');
+            date.textContent = new Date(post.created);
+            Footer.appendChild(TagsP);
+            Footer.appendChild(date);
+            Div.appendChild(CardBody);
+            Div.appendChild(Footer);
+
+            postsElement.appendChild(Div);
           }
         });
       }
@@ -320,14 +369,50 @@ function postAudioForm() {
       .then(createdPost => {
         audioForm.reset();
         listAllPosts();
-      })
+      });
   });
 
-  cancelButton[3].onclick = () => {
+  cancelButton[4].onclick = () => {
     postOptions.style.display = '';
     audioForm.style.display = 'none';
     audioForm.reset();
   };
+}
+
+function postChatForm() {
+  const ChatForm = document.querySelector('#chat-form');
+
+  ChatForm.style.display = '';
+  postOptions.style.display = 'none';
+
+  ChatForm.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const ChatData = new FormData(ChatForm);
+    const ChatContent = ChatData.get('chat-content');
+    const ChatTags = ChatData.get('chat-tags');
+    const PostData = { ChatContent, ChatTags, type: 'chat' };
+
+    ChatForm.style.display = 'none';
+    postOptions.style.display = '';
+
+    fetch(POSTS_URL, {
+      method: 'POST',
+      body: JSON.stringify(PostData),
+      headers: { 'content-type': 'application/json' }
+    })
+      .then(response => response.json())
+      .then(createdPost => {
+        ChatForm.reset();
+        listAllPosts();
+      });
+  });
+
+  cancelButton[3].onclick = () => {
+    postOptions.style.display = '';
+    ChatForm.style.display = 'none';
+    ChatForm.reset();
+  }
 }
 
 function postImageForm() {
@@ -358,7 +443,7 @@ function postImageForm() {
       .then(response => {
         const ImgURL = IMG_URL + response;
         console.log(ImgURL);
-        
+
         const postData = { ImgURL, imageCaption, imageTags, type: 'image' };
         fetch(POSTS_URL, {
           method: 'POST',
@@ -519,7 +604,7 @@ function postVideoForm() {
       });
   });
 
-  cancelButton[4].onclick = () => {
+  cancelButton[5].onclick = () => {
     postOptions.style.display = '';
     VideoForm.style.display = 'none';
     VideoForm.reset();

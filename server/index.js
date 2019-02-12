@@ -99,6 +99,13 @@ function isValidPost(post) {
       post.VideoDescription.toString().trim() !== '' &&
       post.VideoTags.toString().trim() !== ''
     );
+  else if (post.type === 'chat')
+    return (
+      post.ChatContent &&
+      post.ChatTags &&
+      post.ChatContent.toString().trim() !== '' &&
+      post.ChatTags.toString().trim() !== ''
+    );
   else return false;
 }
 
@@ -143,6 +150,13 @@ function parsePost(post) {
       type: 'video',
       created: new Date()
     };
+  else if (post.type === 'chat')
+    return {
+      content: post.ChatContent.toString(),
+      tags: post.ChatTags.toString(),
+      type: 'chat',
+      created: new Date()
+    };
 }
 
 app.post('/img', upload.single('file'), (req, res) => {
@@ -167,7 +181,7 @@ app.post('/tag', (req, res) => {
   });
   req.on('end', () => {
     body += ')';
-    regex = new RegExp(body, 'i');
+    const regex = new RegExp(body, 'i');
     posts.find({ tags: { $regex: regex } }).then(posts => {
       res.json(posts);
     });

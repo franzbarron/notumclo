@@ -1,8 +1,13 @@
 {
     "name": "notumclo",
-    "description": "TBA",
-    "authors": "Francisco Barrón",
+    "description": "tumblr clone built to demonstrate the fullstack (server, client, database).",
+    "authors": "Francisco Barrón <franz.barron@outlook.com> (http://franciscobarron.com)",
     "version": "1.0.0",
+    "homepage": "https://notumclo.glitch.me",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/franzbarron/notumclo.git"
+    },
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
@@ -19,5 +24,6 @@
     },
     "devDependencies": {
         "nodemon": "^1.18.9"
-    }
+    },
+    "private": true
 }

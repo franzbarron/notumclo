@@ -58,30 +58,30 @@ app.listen(5000, () => {
 function isValidPost(post) {
   if (post.type === 'text')
     return (
-      post.textTitle &&
-      post.textContent &&
-      post.textTags &&
-      post.textTitle.toString().trim() !== '' &&
-      post.textContent.toString().trim() !== '' &&
-      post.textTags.toString().trim() !== ''
+      post.TextTitle &&
+      post.TextContent &&
+      post.TextTags &&
+      post.TextTitle.toString().trim() !== '' &&
+      post.TextContent.toString().trim() !== '' &&
+      post.TextTags.toString().trim() !== ''
     );
   else if (post.type === 'image')
     return (
       post.ImgURL &&
-      post.imageCaption &&
-      post.imageTags &&
+      post.ImageCaption &&
+      post.ImageTags &&
       post.ImgURL.toString().trim() !== '' &&
-      post.imageCaption.toString().trim() !== '' &&
-      post.imageTags.toString().trim() !== ''
+      post.ImageCaption.toString().trim() !== '' &&
+      post.ImageTags.toString().trim() !== ''
     );
   else if (post.type === 'quote')
     return (
-      post.quoteContent &&
-      post.quoteSource &&
-      post.quoteTags &&
-      post.quoteContent.toString().trim() !== '' &&
-      post.quoteSource.toString().trim() !== '' &&
-      post.quoteTags.toString().trim() !== ''
+      post.QuoteContent &&
+      post.QuoteSource &&
+      post.QuoteTags &&
+      post.QuoteContent.toString().trim() !== '' &&
+      post.QuoteSource.toString().trim() !== '' &&
+      post.QuoteTags.toString().trim() !== ''
     );
   else if (post.type === 'audio')
     return (
@@ -112,25 +112,25 @@ function isValidPost(post) {
 function parsePost(post) {
   if (post.type === 'text')
     return {
-      title: post.textTitle.toString(),
-      content: post.textContent.toString(),
-      tags: post.textTags.toString(),
+      title: post.TextTitle.toString(),
+      content: post.TextContent.toString(),
+      tags: post.TextTags.toString(),
       type: 'text',
       created: new Date()
     };
   else if (post.type === 'image')
     return {
       file: post.ImgURL.toString(),
-      caption: post.imageCaption.toString(),
-      tags: post.imageTags.toString(),
+      caption: post.ImageCaption.toString(),
+      tags: post.ImageTags.toString(),
       type: 'image',
       created: new Date()
     };
   else if (post.type === 'quote')
     return {
-      content: post.quoteContent.toString(),
-      source: post.quoteSource.toString(),
-      tags: post.quoteTags.toString(),
+      content: post.QuoteContent.toString(),
+      source: post.QuoteSource.toString(),
+      tags: post.QuoteTags.toString(),
       type: 'quote',
       created: new Date()
     };

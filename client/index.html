@@ -26,7 +26,7 @@
     <div class="container-fluid text-center">
       <h1>notumclo <small class="text-muted">| Not a Tumblr Clone</small></h1>
     </div>
-    <div class="row text-center" id="postOptions">
+    <div class="row text-center" id="post-options">
       <div class="col-xs"></div>
       <div class="col-sm">
         <span class="clickable" onclick="postTextForm()"
@@ -61,14 +61,14 @@
       <div class="col-xs"></div>
     </div>
     <div id="forms" class="container-fluid" style="width: 75%">
-      <form id="textForm" name="textForm" style="display: none;">
+      <form id="text-form" name="text-form" style="display: none;">
         <div class="form-group">
-          <label for="textTitle">Title</label>
+          <label for="text-title">Title</label>
           <input
             type="text"
             class="form-control"
-            name="textTitle"
-            id="textTitle"
+            name="text-title"
+            id="text-title"
             placeholder="Post Title"
           />
         </div>
@@ -76,19 +76,19 @@
           <label for="textBody">Text</label>
           <textarea
             class="form-control"
-            name="textContent"
-            id="textContent"
+            name="text-content"
+            id="text-content"
             rows="3"
             placeholder="Your text here"
           ></textarea>
         </div>
         <div class="form-group">
-          <label for="textTags">Tags</label>
+          <label for="text-tags">Tags</label>
           <input
             type="text"
             class="form-control"
-            name="textTags"
-            id="textTags"
+            name="text-tags"
+            id="text-tags"
             placeholder="#tags"
           />
         </div>
@@ -100,34 +100,34 @@
       <div id="preview" style="text-align: center">
         <img src="" class="img-fluid" id="thumbnail" style="max-height:28em;" />
       </div>
-      <form id="imageForm" name="imageForm" style="display: none;">
-        <div class="form-group custom-file" id="fileFormGoup">
+      <form id="image-form" name="imageForm" style="display: none;">
+        <div class="form-group custom-file" id="file-form-group">
           <input
             type="file"
-            name="imageFile"
-            id="imageFile"
+            name="image-file"
+            id="image-file"
             class="custom-file-input"
             accept="image/*"
           />
-          <label class="custom-file-label" for="imageFile">Choose file</label>
+          <label class="custom-file-label" for="image-file">Choose file</label>
         </div>
         <div class="form-group">
-          <label for="imageCaption">Caption</label>
+          <label for="image-caption">Caption</label>
           <textarea
             class="form-control"
-            name="imageCaption"
-            id="imageCaption"
+            name="image-caption"
+            id="image-caption"
             rows="3"
             placeholder="Add a caption"
           ></textarea>
         </div>
         <div class="form-group">
-          <label for="imageTags">Tags</label>
+          <label for="image-tags">Tags</label>
           <input
             type="text"
             class="form-control"
-            name="imageTags"
-            id="imageTags"
+            name="image-tags"
+            id="image-tags"
             placeholder="#tags"
           />
         </div>
@@ -136,33 +136,33 @@
           Discard
         </button>
       </form>
-      <form id="quoteForm" name="quoteForm" style="display: none;">
+      <form id="quote-form" name="quote-form" style="display: none;">
         <div class="form-group">
-          <label for="quoteContent">Quote</label>
+          <label for="quote-content">Quote</label>
           <textarea
-            name="quoteContent"
-            id="quoteContent"
+            name="quote-content"
+            id="quote-content"
             rows="1"
             class="form-control"
             placeholder="Quote"
           ></textarea>
         </div>
         <div class="form-group">
-          <label for="quoteSource">Source</label>
+          <label for="quote-source">Source</label>
           <input
             type="text"
-            name="quoteSource"
-            id="quoteSource"
+            name="quote-source"
+            id="quote-source"
             class="form-control"
             placeholder="Source"
           />
         </div>
         <div class="form-group">
-          <label for="quoteTags">Tags</label>
+          <label for="quote-tags">Tags</label>
           <input
             type="text"
-            name="quoteTags"
-            id="quoteTags"
+            name="quote-tags"
+            id="quote-tags"
             class="form-control"
             placeholder="#tags"
           />
@@ -198,13 +198,13 @@
           Discard
         </button>
       </form>
-      <div id="audioTitleInput" style="display: none;">
+      <div id="audio-title-input" style="display: none;">
         <div class="form-group">
-          <label for="audioTitle">Song Title</label>
+          <label for="audio-title">Song Title</label>
           <input
             type="text"
-            name="audioTitle"
-            id="audioTitle"
+            name="audio-title"
+            id="audio-title"
             class="form-control"
             placeholder="Search for a song (add artist and/or album for better results)"
           />
@@ -215,25 +215,25 @@
         <button
           type="button"
           class="btn btn-secondary"
-          onclick="hideInputElement(document.querySelector('#audioTitleInput'))"
+          onclick="hideInputElement(document.querySelector('#audio-title-input'))"
         >
           Discard
         </button>
       </div>
-      <div class="text-center" id="loadingSpinner" style="display: none;">
+      <div class="text-center" id="loading-spinner" style="display: none;">
         <div class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-      <form id="audioForm" style="display: none;">
+      <form id="audio-form" style="display: none;">
         <div
-          id="playButton"
+          id="play-button"
           class="embed-responsive embed-responsive-1by1 mx-auto"
           style="display: none; max-width: 50%;"
         >
           <iframe
             src=""
-            id="SpotifyIframe"
+            id="spotify-frame"
             frameborder="0"
             class="embed-responsive-item"
             allowtransparency="true"
@@ -241,21 +241,21 @@
           ></iframe>
         </div>
         <div class="form-group">
-          <label for="audioDescription">Description</label>
+          <label for="audio-description">Description</label>
           <textarea
-            name="audioDescription"
-            id="audioDescription"
+            name="audio-description"
+            id="audio-description"
             rows="3"
             class="form-control"
             placeholder="Add a description"
           ></textarea>
-          <label for="audioTags">Tags</label>
+          <label for="audio-tags">Tags</label>
           <input
             type="text"
-            name="audioTags"
-            id="audioTags"
+            name="audio-tags"
+            id="audio-tags"
             class="form-control"
-            placeholder="Add a description"
+            placeholder="#tags"
           />
         </div>
         <button type="submit" class="btn btn-primary">Post</button>
@@ -320,7 +320,7 @@
         </button>
       </form>
     </div>
-    <div id="postsFeed" class="container"></div>
+    <div id="posts-feed" class="container"></div>
     <script src="postFunctions.js"></script>
   </body>
 </html>

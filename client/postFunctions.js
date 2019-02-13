@@ -4,154 +4,154 @@ const API_URL =
     : 'https://notumclo-api.glitch.me/';
 const POSTS_URL = API_URL + 'posts';
 const IMG_URL = API_URL + 'img/';
-const postsElement = document.querySelector('#postsFeed');
-const postOptions = document.querySelector('#postOptions');
-const cancelButton = document.querySelectorAll('.btn-cancel');
+const PostsFeed = document.querySelector('#posts-feed');
+const PostOptions = document.querySelector('#post-options');
+const CancelButtons = document.querySelectorAll('.btn-cancel');
 
 listAllPosts();
 
 function listAllPosts() {
-  while (postsElement.firstChild)
-    postsElement.removeChild(postsElement.firstChild);
+  while (PostsFeed.firstChild) PostsFeed.removeChild(PostsFeed.firstChild);
   fetch(POSTS_URL)
     .then(response => response.json())
     .then(posts => {
       if (posts.length === 0) {
-        const div = document.createElement('div');
-        div.classList.add('card');
-        const cardBody = document.createElement('div');
-        cardBody.classList.add('card-body');
-        const txt = document.createElement('p');
-        txt.classList.add('card-text');
-        txt.textContent = 'No posts available';
+        const Div = document.createElement('div');
+        Div.classList.add('card');
+        const CardBody = document.createElement('div');
+        CardBody.classList.add('card-body');
 
-        cardBody.appendChild(txt);
-        div.appendChild(cardBody);
-        postsElement.appendChild(div);
+        const Txt = document.createElement('p');
+        Txt.classList.add('card-text');
+        Txt.textContent = 'No posts available';
+
+        CardBody.appendChild(Txt);
+        Div.appendChild(CardBody);
+        PostsFeed.appendChild(Div);
       } else {
         posts.reverse();
         posts.forEach(post => {
           if (post.type === 'text') {
-            const div = document.createElement('div');
-            div.classList.add('card');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const footer = document.createElement('div');
-            footer.classList.add('card-footer');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
-            const header = document.createElement('h3');
-            header.classList.add('card-title');
-            header.textContent = post.title;
-            const content = document.createElement('p');
-            content.classList.add('card-text');
-            content.textContent = post.content;
+            const CardTitle = document.createElement('h3');
+            CardTitle.classList.add('card-title');
+            CardTitle.textContent = post.title;
+            const CardText = document.createElement('p');
+            CardText.classList.add('card-text');
+            CardText.textContent = post.content;
 
-            const tagsP = document.createElement('p');
-            const postTags = post.tags.split(' ');
-            postTags.forEach(tag => {
-              const tags = document.createElement('a');
-              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              tags.classList.add('tag-link');
-              tags.textContent = tag + ' ';
-              tagsP.appendChild(tags);
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag + ' ';
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
 
-            cardBody.appendChild(header);
-            cardBody.appendChild(content);
-            footer.appendChild(tagsP);
-            footer.appendChild(date);
-            div.appendChild(cardBody);
-            div.appendChild(footer);
+            CardBody.appendChild(CardTitle);
+            CardBody.appendChild(CardText);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsElement.appendChild(div);
+            PostsFeed.appendChild(Card);
           } else if (post.type === 'image') {
-            const div = document.createElement('div');
-            div.classList.add('card');
-            div.classList.add('img-fluid');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const footer = document.createElement('div');
-            footer.classList.add('card-footer');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            Card.classList.add('img-fluid');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
-            const img = new Image();
-            img.src = post.file;
-            img.classList.add('card-img-top');
+            const CardImg = new Image();
+            CardImg.src = post.file;
+            CardImg.classList.add('card-img-top');
 
-            const caption = document.createElement('p');
-            caption.classList.add('card-text');
-            caption.setAttribute('style', 'white-space: pre-line;');
-            caption.textContent = post.caption;
+            const CardText = document.createElement('p');
+            CardText.classList.add('card-text');
+            CardText.setAttribute('style', 'white-space: pre-line;');
+            CardText.textContent = post.caption;
 
-            const tagsP = document.createElement('p');
-            const postTags = post.tags.split(' ');
-            postTags.forEach(tag => {
-              const tags = document.createElement('a');
-              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              tags.classList.add('tag-link');
-              tags.textContent = tag + ' ';
-              tagsP.appendChild(tags);
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag + ' ';
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
 
-            div.appendChild(img);
-            cardBody.appendChild(caption);
-            footer.appendChild(tagsP);
-            footer.appendChild(date);
-            div.appendChild(cardBody);
-            div.appendChild(footer);
+            Card.appendChild(CardImg);
+            CardBody.appendChild(CardText);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsElement.appendChild(div);
+            PostsFeed.appendChild(Card);
           } else if (post.type === 'quote') {
-            const div = document.createElement('div');
-            div.classList.add('card');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const footer = document.createElement('div');
-            footer.classList.add('card-footer');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
-            const blockQuote = document.createElement('blockquote');
-            const content = document.createElement('p');
-            content.classList.add('mb-0');
-            content.setAttribute('style', 'white-space: pre-line;');
-            content.textContent = post.content;
-            const source = document.createElement('footer');
-            source.classList.add('blockquote-footer');
-            source.textContent = post.source;
-            blockQuote.appendChild(content);
-            blockQuote.appendChild(source);
+            const Blockquote = document.createElement('blockquote');
+            const QuoteP = document.createElement('p');
+            QuoteP.classList.add('mb-0');
+            QuoteP.setAttribute('style', 'white-space: pre-line;');
+            QuoteP.textContent = post.content;
+            const BlockquoteFooter = document.createElement('footer');
+            BlockquoteFooter.classList.add('blockquote-footer');
+            BlockquoteFooter.textContent = post.source;
+            Blockquote.appendChild(QuoteP);
+            Blockquote.appendChild(BlockquoteFooter);
 
-            const tagsP = document.createElement('p');
-            const postTags = post.tags.split(' ');
-            postTags.forEach(tag => {
-              const tags = document.createElement('a');
-              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              tags.classList.add('tag-link');
-              tags.textContent = tag;
-              tagsP.appendChild(tags);
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag;
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
 
-            cardBody.appendChild(blockQuote);
-            footer.appendChild(tagsP);
-            footer.appendChild(date);
-            div.appendChild(cardBody);
-            div.appendChild(footer);
+            CardBody.appendChild(Blockquote);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsElement.appendChild(div);
+            PostsFeed.appendChild(Card);
           } else if (post.type === 'audio') {
-            const div = document.createElement('div');
-            div.classList.add('card');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const footer = document.createElement('div');
-            footer.classList.add('card-footer');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
             const FrameContainer = document.createElement('div');
             FrameContainer.classList.add('embed-responsive');
@@ -165,34 +165,34 @@ function listAllPosts() {
             const Description = document.createElement('p');
             Description.textContent = post.description;
 
-            const tagsP = document.createElement('p');
-            const postTags = post.tags.split(' ');
-            postTags.forEach(tag => {
-              const tags = document.createElement('a');
-              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              tags.classList.add('tag-link');
-              tags.textContent = tag;
-              tagsP.appendChild(tags);
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag;
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
 
-            cardBody.appendChild(FrameContainer);
-            cardBody.appendChild(Description);
-            footer.appendChild(tagsP);
-            footer.appendChild(date);
-            div.appendChild(cardBody);
-            div.appendChild(footer);
+            CardBody.appendChild(FrameContainer);
+            CardBody.appendChild(Description);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsElement.appendChild(div);
+            PostsFeed.appendChild(Card);
           } else if (post.type === 'video') {
-            const div = document.createElement('div');
-            div.classList.add('card');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const footer = document.createElement('div');
-            footer.classList.add('card-footer');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
             const FrameContainer = document.createElement('div');
             FrameContainer.classList.add('embed-responsive');
@@ -209,76 +209,76 @@ function listAllPosts() {
             const Description = document.createElement('p');
             Description.textContent = post.description;
 
-            const tagsP = document.createElement('p');
-            const postTags = post.tags.split(' ');
-            postTags.forEach(tag => {
-              const tags = document.createElement('a');
-              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              tags.classList.add('tag-link');
-              tags.textContent = tag;
-              tagsP.appendChild(tags);
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag;
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
 
-            cardBody.appendChild(FrameContainer);
-            cardBody.appendChild(Description);
-            footer.appendChild(tagsP);
-            footer.appendChild(date);
-            div.appendChild(cardBody);
-            div.appendChild(footer);
+            CardBody.appendChild(FrameContainer);
+            CardBody.appendChild(Description);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsElement.appendChild(div);
+            PostsFeed.appendChild(Card);
           } else if (post.type === 'chat') {
-            const lines = post.content.split('\n');
-            const speakers = [];
-            const messages = [];
+            const Lines = post.content.split('\n');
+            const Speakers = [];
+            const Messages = [];
 
-            lines.forEach(line => {
+            Lines.forEach(line => {
               const SplitDone = line.split(':');
-              speakers.push(SplitDone[0]);
-              messages.push(SplitDone[1]);
+              Speakers.push(SplitDone[0]);
+              Messages.push(SplitDone[1]);
             });
 
-            const Div = document.createElement('div');
-            Div.classList.add('card');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
             const CardBody = document.createElement('div');
             CardBody.classList.add('card-body');
-            const Footer = document.createElement('div');
-            Footer.classList.add('card-footer');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
-            for(let i = 0; i < speakers.length; i++) {
+            for (let i = 0; i < Speakers.length; i++) {
               const P = document.createElement('p');
               const Speaker = document.createElement('span');
               const BoldText = document.createElement('strong');
-              BoldText.textContent = speakers[i] + ':';
+              BoldText.textContent = Speakers[i] + ':';
               const Message = document.createElement('span');
-              Message.textContent = messages[i];
+              Message.textContent = Messages[i];
               Speaker.appendChild(BoldText);
               P.appendChild(Speaker);
               P.appendChild(Message);
 
               CardBody.appendChild(P);
             }
-            const TagsP = document.createElement('p');
+            const Tags = document.createElement('p');
             const PostTags = post.tags.split(' ');
             PostTags.forEach(tag => {
-              const Tags = document.createElement('a');
-              Tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              Tags.classList.add('tag-link');
-              Tags.textContent = tag + ' ';
-              TagsP.appendChild(Tags);
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag + ' ';
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
-            Footer.appendChild(TagsP);
-            Footer.appendChild(date);
-            Div.appendChild(CardBody);
-            Div.appendChild(Footer);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsElement.appendChild(Div);
+            PostsFeed.appendChild(Card);
           }
         });
       }
@@ -288,26 +288,26 @@ function listAllPosts() {
 function hideInputElement(elem) {
   elem.value = '';
   elem.style.display = 'none';
-  postOptions.style.display = '';
+  PostOptions.style.display = '';
 }
 
 function postAudioForm() {
-  const audioForm = document.querySelector('#audioForm');
-  const AudioTitleInput = document.querySelector('#audioTitleInput');
-  const ButtonPlay = document.querySelector('#playButton');
-  const LoadingSpinner = document.querySelector('#loadingSpinner');
-  const titleInput = document.querySelector('#audioTitle');
+  const AudioForm = document.querySelector('#audio-form');
+  const AudioTitleInput = document.querySelector('#audio-title-input');
+  const PlayButton = document.querySelector('#play-button');
+  const LoadingSpinner = document.querySelector('#loading-spinner');
+  const AudioTitle = document.querySelector('#audio-title');
 
-  let PlayButtonSrc;
+  let playButtonSrc;
   let accessToken;
 
   AudioTitleInput.style.display = '';
-  postOptions.style.display = 'none';
+  PostOptions.style.display = 'none';
 
-  titleInput.addEventListener('change', event => {
+  AudioTitle.addEventListener('change', event => {
     const SpotifyAPI =
       'https://api.spotify.com/v1/search?type=track&market=MX&limit=10&q=';
-    const query = titleInput.value.replace(/\s/g, '%20');
+    const Query = AudioTitle.value.replace(/\s/g, '%20');
 
     LoadingSpinner.style.display = '';
     AudioTitleInput.style.display = 'none';
@@ -317,7 +317,7 @@ function postAudioForm() {
       .then(token => {
         accessToken = token.access_token;
 
-        fetch(SpotifyAPI + query, {
+        fetch(SpotifyAPI + Query, {
           method: 'GET',
           headers: {
             Authorization: 'Bearer ' + accessToken
@@ -325,40 +325,40 @@ function postAudioForm() {
         })
           .then(response => response.json())
           .then(track => {
-            const frame = document.querySelector('#SpotifyIframe');
+            const Frame = document.querySelector('#spotify-frame');
 
-            document.querySelector('#audioTitle').value = '';
+            AudioTitle.value = '';
 
-            PlayButtonSrc =
+            playButtonSrc =
               'https://open.spotify.com/embed/track/' +
               track.tracks.items[0].uri.replace('spotify:track:', '');
 
-            frame.setAttribute('src', PlayButtonSrc);
-            ButtonPlay.appendChild(frame);
+            Frame.setAttribute('src', playButtonSrc);
+            PlayButton.appendChild(Frame);
 
-            frame.addEventListener('load', () => {
-              ButtonPlay.style.display = '';
+            Frame.addEventListener('load', () => {
+              PlayButton.style.display = '';
               LoadingSpinner.style.display = 'none';
-              audioForm.style.display = '';
+              AudioForm.style.display = '';
             });
           });
       });
   });
 
-  audioForm.addEventListener('submit', event => {
+  AudioForm.addEventListener('submit', event => {
     event.preventDefault();
-    const AudioData = new FormData(audioForm);
-    const AudioDescription = AudioData.get('audioDescription');
-    const AudioTags = AudioData.get('audioTags');
+    const AudioData = new FormData(AudioForm);
+    const AudioDescription = AudioData.get('audio-description');
+    const AudioTags = AudioData.get('audio-tags');
     const PostData = {
-      PlayButtonSrc,
+      PlayButtonSrc: playButtonSrc,
       AudioDescription,
       AudioTags,
       type: 'audio'
     };
 
-    audioForm.style.display = 'none';
-    postOptions.style.display = '';
+    AudioForm.style.display = 'none';
+    PostOptions.style.display = '';
 
     fetch(POSTS_URL, {
       method: 'POST',
@@ -367,15 +367,15 @@ function postAudioForm() {
     })
       .then(response => response.json())
       .then(createdPost => {
-        audioForm.reset();
+        AudioForm.reset();
         listAllPosts();
       });
   });
 
-  cancelButton[4].onclick = () => {
-    postOptions.style.display = '';
-    audioForm.style.display = 'none';
-    audioForm.reset();
+  CancelButtons[4].onclick = () => {
+    PostOptions.style.display = '';
+    AudioForm.style.display = 'none';
+    AudioForm.reset();
   };
 }
 
@@ -383,7 +383,7 @@ function postChatForm() {
   const ChatForm = document.querySelector('#chat-form');
 
   ChatForm.style.display = '';
-  postOptions.style.display = 'none';
+  PostOptions.style.display = 'none';
 
   ChatForm.addEventListener('submit', event => {
     event.preventDefault();
@@ -394,7 +394,7 @@ function postChatForm() {
     const PostData = { ChatContent, ChatTags, type: 'chat' };
 
     ChatForm.style.display = 'none';
-    postOptions.style.display = '';
+    PostOptions.style.display = '';
 
     fetch(POSTS_URL, {
       method: 'POST',
@@ -408,33 +408,39 @@ function postChatForm() {
       });
   });
 
-  cancelButton[3].onclick = () => {
-    postOptions.style.display = '';
+  CancelButtons[3].onclick = () => {
+    PostOptions.style.display = '';
     ChatForm.style.display = 'none';
     ChatForm.reset();
-  }
+  };
 }
 
 function postImageForm() {
-  const imageForm = document.querySelector('#imageForm');
-  const preview = document.querySelector('#preview');
-  const imageInput = document.querySelector('#imageFile');
-  const fileFormGoup = document.querySelector('#fileFormGoup');
+  const ImageForm = document.querySelector('#image-form');
+  const Preview = document.querySelector('#preview');
+  const ImageFile = document.querySelector('#image-file');
+  const FileFormGoup = document.querySelector('#file-form-group');
   let imageDataURL;
-  imageForm.style.display = '';
-  postOptions.style.display = 'none';
-  imageForm.addEventListener('submit', event => {
+
+  ImageForm.style.display = '';
+  PostOptions.style.display = 'none';
+
+  ImageForm.addEventListener('submit', event => {
     event.preventDefault();
+
     const FileForm = new FormData();
-    FileForm.append('file', imageInput.files[0]);
-    const imageData = new FormData(imageForm);
-    const imageCaption = imageData.get('imageCaption');
-    const imageTags = imageData.get('imageTags');
-    fileFormGoup.style.display = '';
-    imageForm.style.display = 'none';
-    postOptions.style.display = '';
-    preview.style.display = 'none';
-    imageForm.reset();
+    FileForm.append('file', ImageFile.files[0]);
+
+    const ImageData = new FormData(ImageForm);
+    const ImageCaption = ImageData.get('image-caption');
+    const ImageTags = ImageData.get('image-tags');
+
+    FileFormGoup.style.display = '';
+    ImageForm.style.display = 'none';
+    PostOptions.style.display = '';
+    Preview.style.display = 'none';
+    ImageForm.reset();
+
     fetch(IMG_URL, {
       method: 'POST',
       body: FileForm
@@ -444,115 +450,122 @@ function postImageForm() {
         const ImgURL = IMG_URL + response;
         console.log(ImgURL);
 
-        const postData = { ImgURL, imageCaption, imageTags, type: 'image' };
+        const PostData = { ImgURL, ImageCaption, ImageTags, type: 'image' };
         fetch(POSTS_URL, {
           method: 'POST',
-          body: JSON.stringify(postData),
+          body: JSON.stringify(PostData),
           headers: { 'content-type': 'application/json' }
         })
           .then(response => response.json())
           .then(createdPost => {
-            imageForm.reset();
+            ImageForm.reset();
             listAllPosts();
           });
       });
   });
 
-  imageInput.addEventListener(
+  ImageFile.addEventListener(
     'change',
     event => {
-      fileFormGoup.style.display = 'none';
-      preview.style.display = '';
-      const reader = new FileReader();
-      reader.onload = () => {
-        imageDataURL = reader.result;
-        const thumbnail = document.querySelector('#thumbnail');
-        thumbnail.src = imageDataURL;
-        preview.appendChild(thumbnail);
+      FileFormGoup.style.display = 'none';
+      Preview.style.display = '';
+      const Reader = new FileReader();
+      Reader.onload = () => {
+        imageDataURL = Reader.result;
+        const Thumbnail = document.querySelector('#thumbnail');
+        Thumbnail.src = imageDataURL;
+        Preview.appendChild(Thumbnail);
       };
-      reader.readAsDataURL(imageInput.files[0]);
+      Reader.readAsDataURL(ImageFile.files[0]);
     },
     false
   );
 
-  cancelButton[1].onclick = () => {
-    postOptions.style.display = '';
-    fileFormGoup.style.display = '';
-    imageForm.style.display = 'none';
-    preview.style.display = 'none';
-    imageForm.reset();
+  CancelButtons[1].onclick = () => {
+    PostOptions.style.display = '';
+    FileFormGoup.style.display = '';
+    ImageForm.style.display = 'none';
+    Preview.style.display = 'none';
+    ImageForm.reset();
   };
 }
 
 function postQuoteForm() {
-  const quoteForm = document.querySelector('#quoteForm');
-  postOptions.style.display = 'none';
-  quoteForm.style.display = '';
-  const quoteContent = document.querySelector('#quoteContent');
-  quoteContent.oninput = () => {
-    quoteContent.style.height = '';
-    quoteContent.style.height =
-      Math.min(quoteContent.scrollHeight, 82) * 1.1 + 'px';
+  const QuoteForm = document.querySelector('#quote-form');
+
+  PostOptions.style.display = 'none';
+  QuoteForm.style.display = '';
+
+  const QuoteContent = document.querySelector('#quote-content');
+
+  QuoteContent.oninput = () => {
+    QuoteContent.style.height = '';
+    QuoteContent.style.height =
+      Math.min(QuoteContent.scrollHeight, 82) * 1.1 + 'px';
   };
-  quoteForm.addEventListener('submit', event => {
+  QuoteForm.addEventListener('submit', event => {
     event.preventDefault();
-    const quoteData = new FormData(quoteForm);
-    const quoteContent = quoteData.get('quoteContent');
-    const quoteSource = quoteData.get('quoteSource');
-    const quoteTags = quoteData.get('quoteTags');
-    const postData = { quoteContent, quoteSource, quoteTags, type: 'quote' };
-    quoteForm.style.display = 'none';
-    postOptions.style.display = '';
+
+    const QuoteData = new FormData(QuoteForm);
+    const QuoteContent = QuoteData.get('quote-content');
+    const QuoteSource = QuoteData.get('quote-source');
+    const QuoteTags = QuoteData.get('quote-tags');
+    const PostData = { QuoteContent, QuoteSource, QuoteTags, type: 'quote' };
+    QuoteForm.style.display = 'none';
+    PostOptions.style.display = '';
 
     fetch(POSTS_URL, {
       method: 'POST',
-      body: JSON.stringify(postData),
+      body: JSON.stringify(PostData),
       headers: { 'content-type': 'application/json' }
     })
       .then(response => response.json())
       .then(createdPost => {
-        quoteForm.reset();
+        QuoteForm.reset();
         listAllPosts();
       });
   });
 
-  cancelButton[2].onclick = () => {
-    postOptions.style.display = '';
-    quoteForm.style.display = 'none';
-    quoteForm.reset();
+  CancelButtons[2].onclick = () => {
+    PostOptions.style.display = '';
+    QuoteForm.style.display = 'none';
+    QuoteForm.reset();
   };
 }
 
 function postTextForm() {
-  const textForm = document.querySelector('#textForm');
-  postOptions.style.display = 'none';
-  textForm.style.display = '';
-  textForm.addEventListener('submit', event => {
+  const TextForm = document.querySelector('#text-form');
+
+  PostOptions.style.display = 'none';
+  TextForm.style.display = '';
+
+  TextForm.addEventListener('submit', event => {
     event.preventDefault();
-    const textData = new FormData(textForm);
-    const textTitle = textData.get('textTitle');
-    const textContent = textData.get('textContent');
-    const textTags = textData.get('textTags');
-    const postData = { textTitle, textContent, textTags, type: 'text' };
-    textForm.style.display = 'none';
-    postOptions.style.display = '';
+
+    const TextData = new FormData(TextForm);
+    const TextTitle = TextData.get('text-title');
+    const TextContent = TextData.get('text-content');
+    const TextTags = TextData.get('text-tags');
+    const PostData = { TextTitle, TextContent, TextTags, type: 'text' };
+    TextForm.style.display = 'none';
+    PostOptions.style.display = '';
 
     fetch(POSTS_URL, {
       method: 'POST',
-      body: JSON.stringify(postData),
+      body: JSON.stringify(PostData),
       headers: { 'content-type': 'application/json' }
     })
       .then(response => response.json())
       .then(createdPost => {
-        textForm.reset();
+        TextForm.reset();
         listAllPosts();
       });
   });
 
-  cancelButton[0].onclick = () => {
-    postOptions.style.display = '';
-    textForm.style.display = 'none';
-    textForm.reset();
+  CancelButtons[0].onclick = () => {
+    PostOptions.style.display = '';
+    TextForm.style.display = 'none';
+    TextForm.reset();
   };
 }
 
@@ -562,7 +575,7 @@ function postVideoForm() {
   const VideoURLInput = document.querySelector('#video-url-input');
   const VideoForm = document.querySelector('#video-form');
 
-  postOptions.style.display = 'none';
+  PostOptions.style.display = 'none';
   VideoURL.style.display = '';
 
   VideoURLInput.addEventListener('change', event => {
@@ -589,7 +602,7 @@ function postVideoForm() {
       type: 'video'
     };
 
-    postOptions.style.display = '';
+    PostOptions.style.display = '';
     VideoForm.style.display = 'none';
 
     fetch(POSTS_URL, {
@@ -604,8 +617,8 @@ function postVideoForm() {
       });
   });
 
-  cancelButton[5].onclick = () => {
-    postOptions.style.display = '';
+  CancelButtons[5].onclick = () => {
+    PostOptions.style.display = '';
     VideoForm.style.display = 'none';
     VideoForm.reset();
   };

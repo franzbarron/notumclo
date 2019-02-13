@@ -2,17 +2,17 @@ const API_URL =
   window.location.hostname === '127.0.0.1'
     ? 'http://127.0.0.1:5000/tag'
     : 'https://notumclo-api.glitch.me/tag';
-const postsFeed = document.querySelector('#postsFeed');
-const query = window.location.search.substring(1);
+const PostsFeed = document.querySelector('#posts-feed');
+const Query = window.location.search.substring(1);
 
-document.querySelector('title').textContent = query + ' | notumclo';
-document.querySelector('#header').textContent = '#' + query;
+document.querySelector('title').textContent = Query + ' | notumclo';
+document.querySelector('#header').textContent = '#' + Query;
 listResutls();
 
 function listResutls() {
   fetch(API_URL, {
     method: 'POST',
-    body: query,
+    body: Query,
     headers: {
       'conten-type': 'text/plain'
     }
@@ -20,225 +20,269 @@ function listResutls() {
     .then(respone => respone.json())
     .then(posts => {
       if (posts.length === 0) {
-        const div = document.createElement('div');
-        div.classList.add('card');
-        const cardBody = document.createElement('div');
-        cardBody.classList.add('card-body');
-        const txt = document.createElement('p');
-        txt.classList.add('card-text');
-        txt.textContent = 'No posts available';
+        const Card = document.createElement('div');
+        Card.classList.add('card');
+        const CardBody = document.createElement('div');
+        CardBody.classList.add('card-body');
+        const CardText = document.createElement('p');
+        CardText.classList.add('card-text');
+        CardText.textContent = 'No posts available';
 
-        cardBody.appendChild(txt);
-        div.appendChild(cardBody);
-        postsFeed.appendChild(div);
+        CardBody.appendChild(CardText);
+        Card.appendChild(CardBody);
+        PostsFeed.appendChild(Card);
       } else {
         posts.reverse();
         posts.forEach(post => {
           if (post.type === 'text') {
-            const div = document.createElement('div');
-            div.classList.add('card');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const footer = document.createElement('div');
-            footer.classList.add('card-footer');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
-            const header = document.createElement('h3');
-            header.classList.add('card-title');
-            header.textContent = post.title;
-            const content = document.createElement('p');
-            content.classList.add('card-text');
-            content.setAttribute('style', 'white-space: pre-line;');
-            content.textContent = post.content;
+            const CardTitle = document.createElement('h3');
+            CardTitle.classList.add('card-title');
+            CardTitle.textContent = post.title;
+            const CardText = document.createElement('p');
+            CardText.classList.add('card-text');
+            CardText.setAttribute('style', 'white-space: pre-line;');
+            CardText.textContent = post.content;
 
-            const tagsP = document.createElement('p');
-            const postTags = post.tags.split(' ');
-            postTags.forEach(tag => {
-              const tags = document.createElement('a');
-              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              tags.classList.add('tag-link');
-              tags.textContent = tag + ' ';
-              tagsP.appendChild(tags);
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag + ' ';
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
 
-            cardBody.appendChild(header);
-            cardBody.appendChild(content);
-            footer.appendChild(tagsP);
-            footer.appendChild(date);
-            div.appendChild(cardBody);
-            div.appendChild(footer);
+            CardBody.appendChild(CardTitle);
+            CardBody.appendChild(CardText);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsFeed.appendChild(div);
+            PostsFeed.appendChild(Card);
           } else if (post.type === 'image') {
-            const div = document.createElement('div');
-            div.classList.add('card');
-            div.classList.add('img-fluid');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const footer = document.createElement('div');
-            footer.classList.add('card-footer');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            Card.classList.add('img-fluid');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
-            const img = new Image();
-            img.src = post.file;
-            img.classList.add('card-img-top');
+            const CardImg = new Image();
+            CardImg.src = post.file;
+            CardImg.classList.add('card-img-top');
 
-            const caption = document.createElement('p');
-            caption.classList.add('card-text');
-            caption.setAttribute('style', 'white-space: pre-line;');
-            caption.textContent = post.caption;
+            const CardText = document.createElement('p');
+            CardText.classList.add('card-text');
+            CardText.setAttribute('style', 'white-space: pre-line;');
+            CardText.textContent = post.caption;
 
-            const tagsP = document.createElement('p');
-            const postTags = post.tags.split(' ');
-            postTags.forEach(tag => {
-              const tags = document.createElement('a');
-              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              tags.classList.add('tag-link');
-              tags.textContent = tag + ' ';
-              tagsP.appendChild(tags);
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag + ' ';
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
 
-            div.appendChild(img);
-            cardBody.appendChild(caption);
-            footer.appendChild(tagsP);
-            footer.appendChild(date);
-            div.appendChild(cardBody);
-            div.appendChild(footer);
+            Card.appendChild(CardImg);
+            CardBody.appendChild(CardText);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsFeed.appendChild(div);
+            PostsFeed.appendChild(Card);
           } else if (post.type === 'quote') {
-            const div = document.createElement('div');
-            div.classList.add('card');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const footer = document.createElement('div');
-            footer.classList.add('card-footer');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
-            const blockQuote = document.createElement('blockquote');
-            const content = document.createElement('p');
-            content.classList.add('mb-0');
-            content.setAttribute('style', 'white-space: pre-line;');
-            content.textContent = post.content;
-            const source = document.createElement('footer');
-            source.classList.add('blockquote-footer');
-            source.textContent = post.source;
-            blockQuote.appendChild(content);
-            blockQuote.appendChild(source);
+            const Blockquote = document.createElement('blockquote');
+            const QuoteP = document.createElement('p');
+            QuoteP.classList.add('mb-0');
+            QuoteP.setAttribute('style', 'white-space: pre-line;');
+            QuoteP.textContent = post.content;
+            const BlockquoteFooter = document.createElement('footer');
+            BlockquoteFooter.classList.add('blockquote-footer');
+            BlockquoteFooter.textContent = post.source;
+            Blockquote.appendChild(QuoteP);
+            Blockquote.appendChild(BlockquoteFooter);
 
-            const tagsP = document.createElement('p');
-            const postTags = post.tags.split(' ');
-            postTags.forEach(tag => {
-              const tags = document.createElement('a');
-              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              tags.classList.add('tag-link');
-              tags.textContent = tag;
-              tagsP.appendChild(tags);
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag;
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
 
-            cardBody.appendChild(blockQuote);
-            footer.appendChild(tagsP);
-            footer.appendChild(date);
-            div.appendChild(cardBody);
-            div.appendChild(footer);
+            CardBody.appendChild(Blockquote);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsFeed.appendChild(div);
+            PostsFeed.appendChild(Card);
           } else if (post.type === 'audio') {
-            const div = document.createElement('div');
-            div.classList.add('card');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const footer = document.createElement('div');
-            footer.classList.add('card-footer');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
-            const FrameContainer = document.createElement('div');
-            FrameContainer.classList.add('embed-responsive');
-            FrameContainer.classList.add('embed-responsive-1by1');
+            const EmbedResponsive = document.createElement('div');
+            EmbedResponsive.classList.add('embed-responsive');
+            EmbedResponsive.classList.add('embed-responsive-1by1');
             const SpotifyFrame = document.createElement('iframe');
             SpotifyFrame.classList.add('embed-responsive-item');
             SpotifyFrame.setAttribute('allow', 'encrypted-media');
             SpotifyFrame.setAttribute('allowtransparency', 'true');
             SpotifyFrame.setAttribute('src', post.source);
-            FrameContainer.appendChild(SpotifyFrame);
+            EmbedResponsive.appendChild(SpotifyFrame);
             const Description = document.createElement('p');
             Description.textContent = post.description;
 
-            const tagsP = document.createElement('p');
-            const postTags = post.tags.split(' ');
-            postTags.forEach(tag => {
-              const tags = document.createElement('a');
-              tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              tags.classList.add('tag-link');
-              tags.textContent = tag;
-              tagsP.appendChild(tags);
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag;
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
 
-            cardBody.appendChild(FrameContainer);
-            cardBody.appendChild(Description);
-            footer.appendChild(tagsP);
-            footer.appendChild(date);
-            div.appendChild(cardBody);
-            div.appendChild(footer);
+            CardBody.appendChild(EmbedResponsive);
+            CardBody.appendChild(Description);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsFeed.appendChild(div);
+            PostsFeed.appendChild(Card);
           } else if (post.type === 'chat') {
-            const lines = post.content.split('\n');
-            const speakers = [];
-            const messages = [];
+            const Lines = post.content.split('\n');
+            const Speakers = [];
+            const Messages = [];
 
-            lines.forEach(line => {
+            Lines.forEach(line => {
               const SplitDone = line.split(':');
-              speakers.push(SplitDone[0]);
-              messages.push(SplitDone[1]);
+              Speakers.push(SplitDone[0]);
+              Messages.push(SplitDone[1]);
             });
 
-            const Div = document.createElement('div');
-            Div.classList.add('card');
+            const Card = document.createElement('div');
+            Card.classList.add('card');
             const CardBody = document.createElement('div');
             CardBody.classList.add('card-body');
-            const Footer = document.createElement('div');
-            Footer.classList.add('card-footer');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
 
-            for (let i = 0; i < speakers.length; i++) {
+            for (let i = 0; i < Speakers.length; i++) {
               const P = document.createElement('p');
               const Speaker = document.createElement('span');
               const BoldText = document.createElement('strong');
-              BoldText.textContent = speakers[i] + ':';
+              BoldText.textContent = Speakers[i] + ':';
               const Message = document.createElement('span');
-              Message.textContent = messages[i];
+              Message.textContent = Messages[i];
               Speaker.appendChild(BoldText);
               P.appendChild(Speaker);
               P.appendChild(Message);
 
               CardBody.appendChild(P);
             }
-            const TagsP = document.createElement('p');
+            const Tags = document.createElement('p');
             const PostTags = post.tags.split(' ');
             PostTags.forEach(tag => {
-              const Tags = document.createElement('a');
-              Tags.setAttribute('href', '/tags.html?' + tag.substring(1));
-              Tags.classList.add('tag-link');
-              Tags.textContent = tag + ' ';
-              TagsP.appendChild(Tags);
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag + ' ';
+              Tags.appendChild(TagLink);
             });
-            const date = document.createElement('small');
-            date.classList.add('text-muted');
-            date.textContent = new Date(post.created);
-            Footer.appendChild(TagsP);
-            Footer.appendChild(date);
-            Div.appendChild(CardBody);
-            Div.appendChild(Footer);
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
 
-            postsFeed.appendChild(Div);
+            PostsFeed.appendChild(Card);
+          } else if (post.type === 'video') {
+            const Card = document.createElement('div');
+            Card.classList.add('card');
+            const CardBody = document.createElement('div');
+            CardBody.classList.add('card-body');
+            const CardFooter = document.createElement('div');
+            CardFooter.classList.add('card-footer');
+
+            const FrameContainer = document.createElement('div');
+            FrameContainer.classList.add('embed-responsive');
+            FrameContainer.classList.add('embed-responsive-16by9');
+            const YouTubeFrame = document.createElement('iframe');
+            YouTubeFrame.classList.add('embed-responsive-item');
+            YouTubeFrame.setAttribute(
+              'allow',
+              'accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture'
+            );
+            YouTubeFrame.setAttribute('allowfullscreen', 'true');
+            YouTubeFrame.setAttribute('src', post.source);
+            FrameContainer.appendChild(YouTubeFrame);
+            const Description = document.createElement('p');
+            Description.textContent = post.description;
+
+            const Tags = document.createElement('p');
+            const PostTags = post.tags.split(' ');
+            PostTags.forEach(tag => {
+              const TagLink = document.createElement('a');
+              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.classList.add('tag-link');
+              TagLink.textContent = tag;
+              Tags.appendChild(TagLink);
+            });
+            const PostDate = document.createElement('small');
+            PostDate.classList.add('text-muted');
+            PostDate.textContent = new Date(post.created);
+
+            CardBody.appendChild(FrameContainer);
+            CardBody.appendChild(Description);
+            CardFooter.appendChild(Tags);
+            CardFooter.appendChild(PostDate);
+            Card.appendChild(CardBody);
+            Card.appendChild(CardFooter);
+
+            PostsFeed.appendChild(Card);
           }
         });
       }

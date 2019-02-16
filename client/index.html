@@ -23,6 +23,12 @@
     <link rel="stylesheet" href="css/bootstrap.css" />
   </head>
   <body>
+    <div
+      id="error-alert"
+      class="alert alert-danger"
+      role="alert"
+      style="display: none;"
+    ></div>
     <div class="container-fluid text-center">
       <h1>notumclo <small class="text-muted">| Not a Tumblr Clone</small></h1>
     </div>
@@ -97,11 +103,8 @@
           Discard
         </button>
       </form>
-      <div id="preview" style="text-align: center">
-        <img src="" class="img-fluid" id="thumbnail" style="max-height:28em;" />
-      </div>
-      <form id="image-form" name="imageForm" style="display: none;">
-        <div class="form-group custom-file" id="file-form-group">
+      <div id="file-form-group" style="display: none;">
+        <div class="form-group custom-file">
           <input
             type="file"
             name="image-file"
@@ -111,6 +114,18 @@
           />
           <label class="custom-file-label" for="image-file">Choose file</label>
         </div>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="hideInputElement(document.querySelector('#file-form-group'))"
+        >
+          Discard
+        </button>
+      </div>
+      <div id="preview" style="text-align: center">
+        <img src="" class="img-fluid" id="thumbnail" style="max-height:28em;" />
+      </div>
+      <form id="image-form" name="imageForm" style="display: none;">
         <div class="form-group">
           <label for="image-caption">Caption</label>
           <textarea

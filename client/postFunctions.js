@@ -7,6 +7,7 @@ const IMG_URL = API_URL + 'img/';
 const PostsFeed = document.querySelector('#posts-feed');
 const PostOptions = document.querySelector('#post-options');
 const CancelButtons = document.querySelectorAll('.btn-cancel');
+const ErrorAlert = document.querySelector('#error-alert');
 
 listAllPosts();
 
@@ -305,6 +306,8 @@ function postAudioForm() {
   PostOptions.style.display = 'none';
 
   AudioTitle.addEventListener('change', event => {
+    event.stopImmediatePropagation();
+
     const SpotifyAPI =
       'https://api.spotify.com/v1/search?type=track&market=MX&limit=10&q=';
     const Query = AudioTitle.value.replace(/\s/g, '%20');
@@ -326,6 +329,10 @@ function postAudioForm() {
           .then(response => response.json())
           .then(track => {
             const Frame = document.querySelector('#spotify-frame');
+            const Tracks = track.tracks.items;
+
+            if (Tracks.length === 0)
+              throw new Error('No track found with this title');
 
             AudioTitle.value = '';
 
@@ -341,35 +348,79 @@ function postAudioForm() {
               LoadingSpinner.style.display = 'none';
               AudioForm.style.display = '';
             });
+          })
+          .catch(err => {
+            AudioForm.reset();
+
+            ErrorAlert.textContent = err.toString().substring(7);
+
+            AudioForm.style.display = 'none';
+            LoadingSpinner.style.display = 'none';
+            PostOptions.style.display = '';
+            ErrorAlert.style.display = '';
+
+            setTimeout(() => {
+              ErrorAlert.style.display = 'none';
+            }, 3000);
           });
       });
   });
 
   AudioForm.addEventListener('submit', event => {
     event.preventDefault();
-    const AudioData = new FormData(AudioForm);
-    const AudioDescription = AudioData.get('audio-description');
-    const AudioTags = AudioData.get('audio-tags');
-    const PostData = {
-      PlayButtonSrc: playButtonSrc,
-      AudioDescription,
-      AudioTags,
-      type: 'audio'
-    };
+    event.stopImmediatePropagation();
 
     AudioForm.style.display = 'none';
     PostOptions.style.display = '';
 
-    fetch(POSTS_URL, {
-      method: 'POST',
-      body: JSON.stringify(PostData),
-      headers: { 'content-type': 'application/json' }
-    })
-      .then(response => response.json())
-      .then(createdPost => {
-        AudioForm.reset();
-        listAllPosts();
-      });
+    const AudioData = new FormData(AudioForm);
+    const AudioDescription = AudioData.get('audio-description');
+    const AudioTags = AudioData.get('audio-tags');
+
+    if (!validatePostContent(AudioDescription, AudioTags)) {
+      AudioForm.reset();
+
+      ErrorAlert.textContent =
+        'Post must include a Description and at least one Tag';
+
+      AudioForm.style.display = 'none';
+      PostOptions.style.display = '';
+      ErrorAlert.style.display = '';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else if (!validateTagsContent(AudioTags)) {
+      AudioForm.reset();
+
+      ErrorAlert.textContent = 'Tags must start with #';
+
+      AudioForm.style.display = 'none';
+      PostOptions.style.display = '';
+      ErrorAlert.style.display = '';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else {
+      const PostData = {
+        PlayButtonSrc: playButtonSrc,
+        AudioDescription,
+        AudioTags,
+        type: 'audio'
+      };
+
+      fetch(POSTS_URL, {
+        method: 'POST',
+        body: JSON.stringify(PostData),
+        headers: { 'content-type': 'application/json' }
+      })
+        .then(response => response.json())
+        .then(createdPost => {
+          AudioForm.reset();
+          listAllPosts();
+        });
+    }
   });
 
   CancelButtons[4].onclick = () => {
@@ -387,25 +438,54 @@ function postChatForm() {
 
   ChatForm.addEventListener('submit', event => {
     event.preventDefault();
-
-    const ChatData = new FormData(ChatForm);
-    const ChatContent = ChatData.get('chat-content');
-    const ChatTags = ChatData.get('chat-tags');
-    const PostData = { ChatContent, ChatTags, type: 'chat' };
+    event.stopImmediatePropagation();
 
     ChatForm.style.display = 'none';
     PostOptions.style.display = '';
 
-    fetch(POSTS_URL, {
-      method: 'POST',
-      body: JSON.stringify(PostData),
-      headers: { 'content-type': 'application/json' }
-    })
-      .then(response => response.json())
-      .then(createdPost => {
-        ChatForm.reset();
-        listAllPosts();
-      });
+    const ChatData = new FormData(ChatForm);
+    const ChatContent = ChatData.get('chat-content');
+    const ChatTags = ChatData.get('chat-tags');
+
+    if (!validatePostContent(ChatContent, ChatTags)) {
+      ChatForm.reset();
+
+      ErrorAlert.textContent =
+        'Post must include a Title, a Body, and at least one Tag';
+
+      ChatForm.style.display = 'none';
+      ErrorAlert.style.display = '';
+      PostOptions.style.display = '';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else if (!validateTagsContent(ChatTags)) {
+      TextForm.reset();
+
+      ErrorAlert.textContent = 'Tags must start with #';
+
+      ChatForm.style.display = 'none';
+      ErrorAlert.style.display = '';
+      PostOptions.style.display = '';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else {
+      const PostData = { ChatContent, ChatTags, type: 'chat' };
+
+      fetch(POSTS_URL, {
+        method: 'POST',
+        body: JSON.stringify(PostData),
+        headers: { 'content-type': 'application/json' }
+      })
+        .then(response => response.json())
+        .then(createdPost => {
+          ChatForm.reset();
+          listAllPosts();
+        });
+    }
   });
 
   CancelButtons[3].onclick = () => {
@@ -416,17 +496,25 @@ function postChatForm() {
 }
 
 function postImageForm() {
-  const ImageForm = document.querySelector('#image-form');
-  const Preview = document.querySelector('#preview');
-  const ImageFile = document.querySelector('#image-file');
   const FileFormGoup = document.querySelector('#file-form-group');
+  const ImageForm = document.querySelector('#image-form');
+  const ImageFile = document.querySelector('#image-file');
+  const Preview = document.querySelector('#preview');
   let imageDataURL;
 
-  ImageForm.style.display = '';
+  // ImageForm.style.display = '';
+  // ImageFileForm.style.display = '';
+  FileFormGoup.style.display = '';
+
   PostOptions.style.display = 'none';
 
   ImageForm.addEventListener('submit', event => {
     event.preventDefault();
+    event.stopImmediatePropagation();
+
+    ImageForm.style.display = 'none';
+    PostOptions.style.display = '';
+    Preview.style.display = 'none';
 
     const FileForm = new FormData();
     FileForm.append('file', ImageFile.files[0]);
@@ -435,39 +523,58 @@ function postImageForm() {
     const ImageCaption = ImageData.get('image-caption');
     const ImageTags = ImageData.get('image-tags');
 
-    FileFormGoup.style.display = '';
-    ImageForm.style.display = 'none';
-    PostOptions.style.display = '';
-    Preview.style.display = 'none';
-    ImageForm.reset();
+    if (!validatePostContent(ImageCaption, ImageTags)) {
+      ImageForm.reset();
 
-    fetch(IMG_URL, {
-      method: 'POST',
-      body: FileForm
-    })
-      .then(response => response.text())
-      .then(response => {
-        const ImgURL = IMG_URL + response;
-        console.log(ImgURL);
+      ErrorAlert.textContent =
+        'Post must include a Caption and at least one Tag';
 
-        const PostData = { ImgURL, ImageCaption, ImageTags, type: 'image' };
-        fetch(POSTS_URL, {
-          method: 'POST',
-          body: JSON.stringify(PostData),
-          headers: { 'content-type': 'application/json' }
-        })
-          .then(response => response.json())
-          .then(createdPost => {
-            ImageForm.reset();
-            listAllPosts();
-          });
-      });
+      ErrorAlert.style.display = '';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else if (!validateTagsContent(ImageTags)) {
+      ImageForm.reset();
+
+      ErrorAlert.textContent = 'Tags must start with #';
+
+      ErrorAlert.style.display = '';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else {
+      ImageForm.reset();
+
+      fetch(IMG_URL, {
+        method: 'POST',
+        body: FileForm
+      })
+        .then(response => response.text())
+        .then(response => {
+          const ImgURL = IMG_URL + response;
+
+          const PostData = { ImgURL, ImageCaption, ImageTags, type: 'image' };
+          fetch(POSTS_URL, {
+            method: 'POST',
+            body: JSON.stringify(PostData),
+            headers: { 'content-type': 'application/json' }
+          })
+            .then(response => response.json())
+            .then(createdPost => {
+              ImageForm.reset();
+              listAllPosts();
+            });
+        });
+    }
   });
 
   ImageFile.addEventListener(
     'change',
     event => {
       FileFormGoup.style.display = 'none';
+      ImageForm.style.display = '';
       Preview.style.display = '';
       const Reader = new FileReader();
       Reader.onload = () => {
@@ -483,7 +590,7 @@ function postImageForm() {
 
   CancelButtons[1].onclick = () => {
     PostOptions.style.display = '';
-    FileFormGoup.style.display = '';
+    FileFormGoup.style.display = 'none';
     ImageForm.style.display = 'none';
     Preview.style.display = 'none';
     ImageForm.reset();
@@ -505,25 +612,54 @@ function postQuoteForm() {
   };
   QuoteForm.addEventListener('submit', event => {
     event.preventDefault();
+    event.stopImmediatePropagation();
+
+    QuoteForm.style.display = 'none';
+    PostOptions.style.display = '';
 
     const QuoteData = new FormData(QuoteForm);
     const QuoteContent = QuoteData.get('quote-content');
     const QuoteSource = QuoteData.get('quote-source');
     const QuoteTags = QuoteData.get('quote-tags');
     const PostData = { QuoteContent, QuoteSource, QuoteTags, type: 'quote' };
-    QuoteForm.style.display = 'none';
-    PostOptions.style.display = '';
 
-    fetch(POSTS_URL, {
-      method: 'POST',
-      body: JSON.stringify(PostData),
-      headers: { 'content-type': 'application/json' }
-    })
-      .then(response => response.json())
-      .then(createdPost => {
-        QuoteForm.reset();
-        listAllPosts();
-      });
+    if (!validatePostContent(QuoteContent, QuoteSource, QuoteTags)) {
+      QuoteForm.reset();
+
+      ErrorAlert.textContent =
+        'Post must include a Quote, a Source, and at least one Tag';
+
+      ErrorAlert.style.display = '';
+      PostOptions.style.display = '';
+      QuoteForm.style.display = 'none';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else if (!validateTagsContent(QuoteTags)) {
+      QuoteForm.reset();
+
+      ErrorAlert.textContent = 'Tags must start with #';
+
+      ErrorAlert.style.display = '';
+      PostOptions.style.display = '';
+      QuoteForm.style.display = 'none';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else {
+      fetch(POSTS_URL, {
+        method: 'POST',
+        body: JSON.stringify(PostData),
+        headers: { 'content-type': 'application/json' }
+      })
+        .then(response => response.json())
+        .then(createdPost => {
+          QuoteForm.reset();
+          listAllPosts();
+        });
+    }
   });
 
   CancelButtons[2].onclick = () => {
@@ -541,25 +677,50 @@ function postTextForm() {
 
   TextForm.addEventListener('submit', event => {
     event.preventDefault();
+    event.stopImmediatePropagation();
 
     const TextData = new FormData(TextForm);
     const TextTitle = TextData.get('text-title');
     const TextContent = TextData.get('text-content');
     const TextTags = TextData.get('text-tags');
-    const PostData = { TextTitle, TextContent, TextTags, type: 'text' };
-    TextForm.style.display = 'none';
-    PostOptions.style.display = '';
+    if (!validatePostContent(TextTitle, TextContent, TextTags)) {
+      TextForm.reset();
+      ErrorAlert.textContent =
+        'Post must include a Title, a Body, and at least one Tag';
+      PostOptions.style.display = '';
+      TextForm.style.display = 'none';
+      ErrorAlert.style.display = '';
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else if (!validateTagsContent(TextTags)) {
+      TextForm.reset();
+      ErrorAlert.textContent = 'Tags must start with #';
+      PostOptions.style.display = '';
+      TextForm.style.display = 'none';
+      ErrorAlert.style.display = '';
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else {
+      const PostData =
+        TextTags.trim === ''
+          ? { TextTitle, TextContent, type: 'text' }
+          : { TextTitle, TextContent, TextTags, type: 'text' };
+      TextForm.style.display = 'none';
+      PostOptions.style.display = '';
 
-    fetch(POSTS_URL, {
-      method: 'POST',
-      body: JSON.stringify(PostData),
-      headers: { 'content-type': 'application/json' }
-    })
-      .then(response => response.json())
-      .then(createdPost => {
-        TextForm.reset();
-        listAllPosts();
-      });
+      fetch(POSTS_URL, {
+        method: 'POST',
+        body: JSON.stringify(PostData),
+        headers: { 'content-type': 'application/json' }
+      })
+        .then(response => response.json())
+        .then(createdPost => {
+          TextForm.reset();
+          listAllPosts();
+        });
+    }
   });
 
   CancelButtons[0].onclick = () => {
@@ -579,7 +740,26 @@ function postVideoForm() {
   VideoURL.style.display = '';
 
   VideoURLInput.addEventListener('change', event => {
-    const YouTubeURL = new URL(VideoURLInput.value);
+    event.stopImmediatePropagation();
+
+    let YouTubeURL;
+
+    try {
+      YouTubeURL = new URL(VideoURLInput.value);
+    } catch (err) {
+      VideoURL.style.display = 'none';
+      VideoURLInput.value = '';
+
+      ErrorAlert.textContent = 'Invalid YouTube URL';
+
+      PostOptions.style.display = '';
+      ErrorAlert.style.display = '';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+      return;
+    }
 
     VideoForm.style.display = '';
     VideoURL.style.display = 'none';
@@ -592,29 +772,59 @@ function postVideoForm() {
 
   VideoForm.addEventListener('submit', event => {
     event.preventDefault();
+    event.stopImmediatePropagation();
+
     const VideoData = new FormData(VideoForm);
     const VideoDescription = VideoData.get('video-description');
     const VideoTags = VideoData.get('video-tags');
-    const PostData = {
-      URL: EmbedURL,
-      VideoDescription,
-      VideoTags,
-      type: 'video'
-    };
 
-    PostOptions.style.display = '';
-    VideoForm.style.display = 'none';
+    if (!validatePostContent(VideoDescription, VideoTags)) {
+      VideoForm.reset();
 
-    fetch(POSTS_URL, {
-      method: 'POST',
-      body: JSON.stringify(PostData),
-      headers: { 'content-type': 'application/json' }
-    })
-      .then(response => response.json())
-      .then(createdPost => {
-        VideoForm.reset();
-        listAllPosts();
-      });
+      ErrorAlert.textContent =
+        'Post must include a Description and at least one Tag';
+
+        PostOptions.style.display = '';
+        ErrorAlert.style.display = '';
+        VideoForm.style.display = 'none';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else if (!validateTagsContent(VideoTags)) {
+      VideoForm.reset();
+
+      ErrorAlert.textContent = 'Tags must start with #';
+
+      PostOptions.style.display = '';
+      ErrorAlert.style.display = '';
+      VideoForm.style.display = 'none';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+    } else {
+      const PostData = {
+        URL: EmbedURL,
+        VideoDescription,
+        VideoTags,
+        type: 'video'
+      };
+
+      PostOptions.style.display = '';
+      VideoForm.style.display = 'none';
+
+      fetch(POSTS_URL, {
+        method: 'POST',
+        body: JSON.stringify(PostData),
+        headers: { 'content-type': 'application/json' }
+      })
+        .then(response => response.json())
+        .then(createdPost => {
+          VideoForm.reset();
+          listAllPosts();
+        });
+    }
   });
 
   CancelButtons[5].onclick = () => {
@@ -622,4 +832,20 @@ function postVideoForm() {
     VideoForm.style.display = 'none';
     VideoForm.reset();
   };
+}
+
+function validatePostContent() {
+  for (let i = 0; i < arguments.length; i++) {
+    if (arguments[i].trim() === '') return false;
+  }
+  return true;
+}
+
+function validateTagsContent(tags) {
+  const regex = new RegExp('(#\\w+)', 'g');
+  const arr1 = tags.match(regex);
+  const arr2 = tags.split(' ');
+
+  if (JSON.stringify(arr1) === JSON.stringify(arr2)) return true;
+  return false;
 }

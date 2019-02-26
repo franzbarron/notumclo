@@ -5,16 +5,32 @@ const API_URL =
 const POSTS_URL = API_URL + 'posts';
 const IMG_URL = API_URL + 'img/';
 const PostsFeed = document.querySelector('#posts-feed');
-const PostOptions = document.querySelector('#post-options');
+let PostOptions =
+  window.innerWidth < 576
+    ? document.querySelector('#post-options-small')
+    : document.querySelector('#post-options-large');
 const CancelButtons = document.querySelectorAll('.btn-cancel');
 const ErrorAlert = document.querySelector('#error-alert');
 
 listAllPosts();
 
+window.onresize = () => {
+  PostOptions =
+    window.innerWidth < 576
+      ? document.querySelector('#post-options-small')
+      : document.querySelector('#post-options-large');
+};
+
 function listAllPosts() {
   while (PostsFeed.firstChild) PostsFeed.removeChild(PostsFeed.firstChild);
-  fetch(POSTS_URL)
-    .then(response => response.json())
+  fetch(POSTS_URL, {
+    method: 'GET',
+    credentials: 'include'
+  })
+    .then(response => {
+      if (response.status === 403) window.location.href = 'login.html';
+      else return response.json();
+    })
     .then(posts => {
       if (posts.length === 0) {
         const Div = document.createElement('div');
@@ -35,10 +51,19 @@ function listAllPosts() {
           if (post.type === 'text') {
             const Card = document.createElement('div');
             Card.classList.add('card');
+            const CardHeader = document.createElement('div');
+            CardHeader.classList.add('card-header');
             const CardBody = document.createElement('div');
             CardBody.classList.add('card-body');
             const CardFooter = document.createElement('div');
             CardFooter.classList.add('card-footer');
+
+            const UserHeader = document.createElement('h5');
+            const UserLink = document.createElement('a');
+            UserLink.classList.add('user-link');
+            UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
+            UserLink.textContent = post.creator;
+            UserHeader.appendChild(UserLink);
 
             const CardTitle = document.createElement('h3');
             CardTitle.classList.add('card-title');
@@ -60,10 +85,12 @@ function listAllPosts() {
             PostDate.classList.add('text-muted');
             PostDate.textContent = new Date(post.created);
 
+            CardHeader.appendChild(UserHeader);
             CardBody.appendChild(CardTitle);
             CardBody.appendChild(CardText);
             CardFooter.appendChild(Tags);
             CardFooter.appendChild(PostDate);
+            Card.appendChild(CardHeader);
             Card.appendChild(CardBody);
             Card.appendChild(CardFooter);
 
@@ -71,11 +98,20 @@ function listAllPosts() {
           } else if (post.type === 'image') {
             const Card = document.createElement('div');
             Card.classList.add('card');
+            const CardHeader = document.createElement('div');
+            CardHeader.classList.add('card-header');
             Card.classList.add('img-fluid');
             const CardBody = document.createElement('div');
             CardBody.classList.add('card-body');
             const CardFooter = document.createElement('div');
             CardFooter.classList.add('card-footer');
+
+            const UserHeader = document.createElement('h5');
+            const UserLink = document.createElement('a');
+            UserLink.classList.add('user-link');
+            UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
+            UserLink.textContent = post.creator;
+            UserHeader.appendChild(UserLink);
 
             const CardImg = new Image();
             CardImg.src = post.file;
@@ -99,10 +135,12 @@ function listAllPosts() {
             PostDate.classList.add('text-muted');
             PostDate.textContent = new Date(post.created);
 
-            Card.appendChild(CardImg);
+            CardHeader.appendChild(UserHeader);
             CardBody.appendChild(CardText);
             CardFooter.appendChild(Tags);
             CardFooter.appendChild(PostDate);
+            Card.appendChild(CardHeader);
+            Card.appendChild(CardImg);
             Card.appendChild(CardBody);
             Card.appendChild(CardFooter);
 
@@ -110,10 +148,19 @@ function listAllPosts() {
           } else if (post.type === 'quote') {
             const Card = document.createElement('div');
             Card.classList.add('card');
+            const CardHeader = document.createElement('div');
+            CardHeader.classList.add('card-header');
             const CardBody = document.createElement('div');
             CardBody.classList.add('card-body');
             const CardFooter = document.createElement('div');
             CardFooter.classList.add('card-footer');
+
+            const UserHeader = document.createElement('h5');
+            const UserLink = document.createElement('a');
+            UserLink.classList.add('user-link');
+            UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
+            UserLink.textContent = post.creator;
+            UserHeader.appendChild(UserLink);
 
             const Blockquote = document.createElement('blockquote');
             const QuoteP = document.createElement('p');
@@ -139,9 +186,11 @@ function listAllPosts() {
             PostDate.classList.add('text-muted');
             PostDate.textContent = new Date(post.created);
 
+            CardHeader.appendChild(UserHeader);
             CardBody.appendChild(Blockquote);
             CardFooter.appendChild(Tags);
             CardFooter.appendChild(PostDate);
+            Card.appendChild(CardHeader);
             Card.appendChild(CardBody);
             Card.appendChild(CardFooter);
 
@@ -149,10 +198,19 @@ function listAllPosts() {
           } else if (post.type === 'audio') {
             const Card = document.createElement('div');
             Card.classList.add('card');
+            const CardHeader = document.createElement('div');
+            CardHeader.classList.add('card-header');
             const CardBody = document.createElement('div');
             CardBody.classList.add('card-body');
             const CardFooter = document.createElement('div');
             CardFooter.classList.add('card-footer');
+
+            const UserHeader = document.createElement('h5');
+            const UserLink = document.createElement('a');
+            UserLink.classList.add('user-link');
+            UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
+            UserLink.textContent = post.creator;
+            UserHeader.appendChild(UserLink);
 
             const FrameContainer = document.createElement('div');
             FrameContainer.classList.add('embed-responsive');
@@ -179,10 +237,12 @@ function listAllPosts() {
             PostDate.classList.add('text-muted');
             PostDate.textContent = new Date(post.created);
 
+            CardHeader.appendChild(UserHeader);
             CardBody.appendChild(FrameContainer);
             CardBody.appendChild(Description);
             CardFooter.appendChild(Tags);
             CardFooter.appendChild(PostDate);
+            Card.appendChild(CardHeader);
             Card.appendChild(CardBody);
             Card.appendChild(CardFooter);
 
@@ -190,10 +250,19 @@ function listAllPosts() {
           } else if (post.type === 'video') {
             const Card = document.createElement('div');
             Card.classList.add('card');
+            const CardHeader = document.createElement('div');
+            CardHeader.classList.add('card-header');
             const CardBody = document.createElement('div');
             CardBody.classList.add('card-body');
             const CardFooter = document.createElement('div');
             CardFooter.classList.add('card-footer');
+
+            const UserHeader = document.createElement('h5');
+            const UserLink = document.createElement('a');
+            UserLink.classList.add('user-link');
+            UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
+            UserLink.textContent = post.creator;
+            UserHeader.appendChild(UserLink);
 
             const FrameContainer = document.createElement('div');
             FrameContainer.classList.add('embed-responsive');
@@ -223,10 +292,12 @@ function listAllPosts() {
             PostDate.classList.add('text-muted');
             PostDate.textContent = new Date(post.created);
 
+            CardHeader.appendChild(UserHeader);
             CardBody.appendChild(FrameContainer);
             CardBody.appendChild(Description);
             CardFooter.appendChild(Tags);
             CardFooter.appendChild(PostDate);
+            Card.appendChild(CardHeader);
             Card.appendChild(CardBody);
             Card.appendChild(CardFooter);
 
@@ -244,10 +315,19 @@ function listAllPosts() {
 
             const Card = document.createElement('div');
             Card.classList.add('card');
+            const CardHeader = document.createElement('div');
+            CardHeader.classList.add('card-header');
             const CardBody = document.createElement('div');
             CardBody.classList.add('card-body');
             const CardFooter = document.createElement('div');
             CardFooter.classList.add('card-footer');
+
+            const UserHeader = document.createElement('h5');
+            const UserLink = document.createElement('a');
+            UserLink.classList.add('user-link');
+            UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
+            UserLink.textContent = post.creator;
+            UserHeader.appendChild(UserLink);
 
             for (let i = 0; i < Speakers.length; i++) {
               const P = document.createElement('p');
@@ -274,8 +354,11 @@ function listAllPosts() {
             const PostDate = document.createElement('small');
             PostDate.classList.add('text-muted');
             PostDate.textContent = new Date(post.created);
+
+            CardHeader.appendChild(UserHeader);
             CardFooter.appendChild(Tags);
             CardFooter.appendChild(PostDate);
+            Card.appendChild(CardHeader);
             Card.appendChild(CardBody);
             Card.appendChild(CardFooter);
 
@@ -283,6 +366,9 @@ function listAllPosts() {
           }
         });
       }
+    })
+    .catch(err => {
+      console.log(err);
     });
 }
 
@@ -413,6 +499,7 @@ function postAudioForm() {
       fetch(POSTS_URL, {
         method: 'POST',
         body: JSON.stringify(PostData),
+        credentials: 'include',
         headers: { 'content-type': 'application/json' }
       })
         .then(response => response.json())
@@ -478,6 +565,7 @@ function postChatForm() {
       fetch(POSTS_URL, {
         method: 'POST',
         body: JSON.stringify(PostData),
+        credentials: 'include',
         headers: { 'content-type': 'application/json' }
       })
         .then(response => response.json())
@@ -525,6 +613,7 @@ function postImageForm() {
 
     if (!validatePostContent(ImageCaption, ImageTags)) {
       ImageForm.reset();
+      ImageFile.value = '';
 
       ErrorAlert.textContent =
         'Post must include a Caption and at least one Tag';
@@ -536,6 +625,7 @@ function postImageForm() {
       }, 3000);
     } else if (!validateTagsContent(ImageTags)) {
       ImageForm.reset();
+      ImageFile.value = '';
 
       ErrorAlert.textContent = 'Tags must start with #';
 
@@ -559,11 +649,13 @@ function postImageForm() {
           fetch(POSTS_URL, {
             method: 'POST',
             body: JSON.stringify(PostData),
+            credentials: 'include',
             headers: { 'content-type': 'application/json' }
           })
             .then(response => response.json())
             .then(createdPost => {
               ImageForm.reset();
+              ImageFile.value = '';
               listAllPosts();
             });
         });
@@ -652,6 +744,7 @@ function postQuoteForm() {
       fetch(POSTS_URL, {
         method: 'POST',
         body: JSON.stringify(PostData),
+        credentials: 'include',
         headers: { 'content-type': 'application/json' }
       })
         .then(response => response.json())
@@ -713,11 +806,13 @@ function postTextForm() {
       fetch(POSTS_URL, {
         method: 'POST',
         body: JSON.stringify(PostData),
+        credentials: 'include',
         headers: { 'content-type': 'application/json' }
       })
         .then(response => response.json())
         .then(createdPost => {
           TextForm.reset();
+          console.log(createdPost);
           listAllPosts();
         });
     }
@@ -731,10 +826,11 @@ function postTextForm() {
 }
 
 function postVideoForm() {
-  let EmbedURL = 'https://www.youtube.com/embed/';
+  let EmbedURL = '';
   const VideoURL = document.querySelector('#video-url');
   const VideoURLInput = document.querySelector('#video-url-input');
   const VideoForm = document.querySelector('#video-form');
+  let YouTubeID;
 
   PostOptions.style.display = 'none';
   VideoURL.style.display = '';
@@ -761,11 +857,31 @@ function postVideoForm() {
       return;
     }
 
+    if (YouTubeURL.host.indexOf('youtu') < 0) {
+      VideoURL.style.display = 'none';
+      VideoURLInput.value = '';
+
+      ErrorAlert.textContent = 'Invalid YouTube URL';
+
+      PostOptions.style.display = '';
+      ErrorAlert.style.display = '';
+
+      setTimeout(() => {
+        ErrorAlert.style.display = 'none';
+      }, 3000);
+      return;
+    }
+
+    YouTubeID =
+      YouTubeURL.host === 'youtube.com' || YouTubeURL.host === 'www.youtube.com'
+        ? YouTubeURL.search.substring(3, 14)
+        : YouTubeURL.pathname.substring(1, 12);
+
     VideoForm.style.display = '';
     VideoURL.style.display = 'none';
     VideoURLInput.value = '';
 
-    EmbedURL += YouTubeURL.search.substring(3);
+    EmbedURL = 'https://www.youtube.com/embed/' + YouTubeID;
     document.querySelector('#youtube-iframe').setAttribute('src', EmbedURL);
     document.querySelector('#embeded-video').style.display = '';
   });
@@ -784,9 +900,9 @@ function postVideoForm() {
       ErrorAlert.textContent =
         'Post must include a Description and at least one Tag';
 
-        PostOptions.style.display = '';
-        ErrorAlert.style.display = '';
-        VideoForm.style.display = 'none';
+      PostOptions.style.display = '';
+      ErrorAlert.style.display = '';
+      VideoForm.style.display = 'none';
 
       setTimeout(() => {
         ErrorAlert.style.display = 'none';
@@ -817,6 +933,7 @@ function postVideoForm() {
       fetch(POSTS_URL, {
         method: 'POST',
         body: JSON.stringify(PostData),
+        credentials: 'include',
         headers: { 'content-type': 'application/json' }
       })
         .then(response => response.json())
@@ -832,6 +949,11 @@ function postVideoForm() {
     VideoForm.style.display = 'none';
     VideoForm.reset();
   };
+}
+
+function toggleMenu(id) {
+  const Menu = document.querySelector(id);
+  Menu.style.display = Menu.style.display === 'none' ? '' : 'none';
 }
 
 function validatePostContent() {

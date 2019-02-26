@@ -1,24 +1,39 @@
+const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 const monk = require('monk');
 const multer = require('multer');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const request = require('request');
 
+require('dotenv').config();
+
 const app = express();
-const db = monk(process.env.SECRET || '127.0.0.1/notumclo');
+const db = monk(process.env.DB); // 127.0.0.1/notumclo or mongodb URI
+const posts = db.get('posts');
+const secret = process.env.SECRET; // A long, random string
+const saltRounds = 10;
+const upload = multer({ dest: '/server' });
+const users = db.get('users');
+
 const handleError = (err, res) => {
   res
     .status(500)
     .contentType('text/plain')
     .end('Oops! Something went wrong!');
 };
-const posts = db.get('posts');
-const upload = multer({ dest: '/server' });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://127.0.0.1:8080', 'https://notumclo.glitch.me'],
+    credentials: true
+  })
+);
+app.use(cookieParser());
 app.use(express.json());
 app.use('/img', express.static('img'));
 
@@ -26,16 +41,47 @@ app.get('/', (req, res) => {
   res.json({ message: 'notumclo' });
 });
 
-app.get('/posts', (req, res) => {
+app.get('/dashboard', (req, res) => {
+  const token = req.cookies.token;
   posts.find().then(posts => {
+    jwt.verify(token, secret, (err, decoded) => {
+      if (err) return res.status(403).json({ message: 'User not authorized' });
+      res.json(posts);
+    });
+  });
+});
+
+app.get('/posts', (req, res) => {
+  const token = req.cookies.token;
+  posts.find().then(posts => {
+    jwt.verify(token, secret, (err, decoded) => {
+      if (err) return res.status(403).json({ message: 'User not authorized' });
+      res.json(posts);
+    });
+  });
+});
+
+app.post('/username', (req, res) => {
+  let user = '';
+  req.on('data', chunk => {
+    user += chunk.toString();
+  });
+  req.on('end', () => {
+    posts.findOne({ creatorID: user }).then(results => {
+      res.send(results.creator);
+    });
+  });
+});
+
+app.get('/users', (req, res) => {
+  users.find().then(posts => {
     res.json(posts);
   });
 });
 
 app.get('/spotify', (req, res) => {
   const Headers = {
-    Authorization:
-      'Basic NzEwMmNjY2IyYjMxNDkwNmI0NmIyZGUwMjY4OGVlYmE6YzQyMjQ4N2VjNTkxNGZhMDk1YTQ5NjhkZmI3ZDkzMDE=',
+    Authorization: 'Basic ' + process.env.SPOTIFY, // <base64 encoded client_id:client_secret> More info here: https://developer.spotify.com/documentation/general/guides/authorization-guide/#client-credentials-flow
     'Content-Type': 'application/x-www-form-urlencoded'
   };
   const DataString = 'grant_type=client_credentials';
@@ -54,6 +100,18 @@ app.get('/spotify', (req, res) => {
 app.listen(5000, () => {
   console.log('Listening on http://127.0.0.1:5000');
 });
+
+function isValidLoginRequest(LoginRequest) {
+  return (
+    LoginRequest.usermail &&
+    LoginRequest.password &&
+    LoginRequest.type &&
+    LoginRequest.usermail.toString().trim() !== '' &&
+    LoginRequest.password.toString().trim() !== '' &&
+    (LoginRequest.type.toString() === 'email' ||
+      LoginRequest.type.toString() === 'username')
+  );
+}
 
 function isValidPost(post) {
   if (post.type === 'text')
@@ -109,14 +167,27 @@ function isValidPost(post) {
   else return false;
 }
 
-function parsePost(post) {
+function isValidRegRequest(regRequest) {
+  return (
+    regRequest.Username &&
+    regRequest.Email &&
+    regRequest.Password &&
+    regRequest.Username.toString().trim() &&
+    regRequest.Email.toString().trim() &&
+    regRequest.Password.toString().trim()
+  );
+}
+
+function parsePost(post, id, username) {
   if (post.type === 'text')
     return {
       title: post.TextTitle.toString(),
       content: post.TextContent.toString(),
       tags: post.TextTags.toString(),
       type: 'text',
-      created: new Date()
+      created: new Date(),
+      creatorID: id,
+      creator: username
     };
   else if (post.type === 'image')
     return {
@@ -124,7 +195,9 @@ function parsePost(post) {
       caption: post.ImageCaption.toString(),
       tags: post.ImageTags.toString(),
       type: 'image',
-      created: new Date()
+      created: new Date(),
+      creatorID: id,
+      creator: username
     };
   else if (post.type === 'quote')
     return {
@@ -132,7 +205,9 @@ function parsePost(post) {
       source: post.QuoteSource.toString(),
       tags: post.QuoteTags.toString(),
       type: 'quote',
-      created: new Date()
+      created: new Date(),
+      creatorID: id,
+      creator: username
     };
   else if (post.type === 'audio')
     return {
@@ -140,7 +215,9 @@ function parsePost(post) {
       description: post.AudioDescription.toString(),
       tags: post.AudioTags.toString(),
       type: 'audio',
-      created: new Date()
+      created: new Date(),
+      creatorID: id,
+      creator: username
     };
   else if (post.type === 'video')
     return {
@@ -148,21 +225,25 @@ function parsePost(post) {
       description: post.VideoDescription.toString(),
       tags: post.VideoTags.toString(),
       type: 'video',
-      created: new Date()
+      created: new Date(),
+      creatorID: id,
+      creator: username
     };
   else if (post.type === 'chat')
     return {
       content: post.ChatContent.toString(),
       tags: post.ChatTags.toString(),
       type: 'chat',
-      created: new Date()
+      created: new Date(),
+      creatorID: id,
+      creator: username
     };
 }
 
 app.post('/img', upload.single('file'), (req, res) => {
   const Fname = Date.now() + path.extname(req.file.originalname).toLowerCase();
   const tempPath = req.file.path;
-  const targetPath = path.join(__dirname, '/img/' + Fname);
+  const targetPath = path.join(__dirname, '/img/', Fname);
 
   fs.rename(tempPath, targetPath, err => {
     if (err) return handleError(err, res);
@@ -174,13 +255,97 @@ app.post('/img', upload.single('file'), (req, res) => {
   });
 });
 
+app.post('/login', (req, res) => {
+  if (isValidLoginRequest(req.body)) {
+    const usermail = req.body.usermail.toString();
+    const password = req.body.password.toString();
+    const type = req.body.type.toString();
+
+    if (type === 'email') {
+      users.find({ email: usermail }).then(results => {
+        if (results.length === 0) {
+          res.status(401);
+          res.json({ message: 'Email not found' });
+        }
+        bcrypt.compare(password, results[0].password, (err, same) => {
+          if (same) {
+            const token = jwt.sign({ id: results[0]._id }, secret, {
+              expiresIn: 604800000
+            });
+            res.cookie('token', token, { maxAge: 604800000, httpOnly: false });
+            res.status(200).send(token);
+          } else {
+            res.status(401);
+            res.json({ message: 'Incorrect Password' });
+          }
+        });
+      });
+    } else {
+      users.find({ username: usermail }).then(results => {
+        if (results.length === 0) {
+          res.status(401);
+          res.json({ message: 'Username not found' });
+        }
+        bcrypt.compare(password, results[0].password, (err, same) => {
+          if (same) {
+            const token = jwt.sign({ id: results[0]._id }, secret, {
+              expiresIn: 604800000
+            });
+            res.cookie('token', token, { maxAge: 604800000, httpOnly: false });
+            res.status(200).send(token);
+          } else {
+            res.status(401);
+            res.json({ message: 'Incorrect Password' });
+          }
+        });
+      });
+    }
+  }
+});
+
+app.post('/registration', (req, res) => {
+  if (isValidRegRequest(req.body)) {
+    const username = req.body.Username.toString();
+    const email = req.body.Email.toString();
+    const password = req.body.Password.toString();
+
+    users.find({ username: username }).then(results => {
+      if (results.length > 0) {
+        res.status(409);
+        res.json({ message: 'An account with this username already exists' });
+      }
+    });
+
+    users.find({ email: email }).then(results => {
+      if (results.length > 0) {
+        res.status(409);
+        res.json({ message: 'An account with this email already exists' });
+      }
+    });
+
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+      users.insert({ username, email, password: hash }).then(createdUser => {
+        const userId = createdUser._id;
+        const token = jwt.sign({ id: userId }, secret, {
+          expiresIn: 604800000
+        });
+        res.cookie('token', token, { maxAge: 604800000, httpOnly: false });
+        res.status(200).send(token);
+      });
+    });
+  } else {
+    res.status(422);
+    res.json({ message: 'Invalid request' });
+  }
+});
+
 app.post('/tag', (req, res) => {
-  let body = '(#';
+  let body = '#(';
   req.on('data', chunk => {
     body += chunk.toString();
   });
   req.on('end', () => {
-    body += ')';
+    body += ')(\b|$)';
     const regex = new RegExp(body, 'i');
     posts.find({ tags: { $regex: regex } }).then(posts => {
       res.json(posts);
@@ -188,13 +353,35 @@ app.post('/tag', (req, res) => {
   });
 });
 
-app.use(rateLimit({ windowMs: 10 * 60 * 1000, max: 6 }));
+app.post('/user', (req, res) => {
+  let user = '';
+  req.on('data', chunk => {
+    user += chunk.toString();
+  });
+  req.on('end', () => {
+    posts.find({ creatorID: user }).then(posts => {
+      res.json(posts);
+    });
+  });
+});
+
+app.use(rateLimit({ windowMs: 600000, max: 20 }));
 
 app.post('/posts', (req, res) => {
+  const token = req.cookies.token;
   if (isValidPost(req.body)) {
-    const post = parsePost(req.body);
-    posts.insert(post).then(createdPost => {
-      res.json(createdPost);
+    let userID;
+    let username;
+    jwt.verify(token, secret, (err, decoded) => {
+      if (err) return res.status(403).json({ message: 'Forbiden' });
+      userID = decoded.id;
+      users.find({ _id: userID }).then(results => {
+        username = results[0].username;
+        const post = parsePost(req.body, userID, username);
+        posts.insert(post).then(createdPost => {
+          res.json(createdPost);
+        });
+      });
     });
   } else {
     res.status(422);

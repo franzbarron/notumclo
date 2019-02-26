@@ -66,3 +66,13 @@ img/
 # local bootstrap and fontawesome
 css/
 webfonts/
+
+# favicon and bookmark icons
+client/*.png
+client/*.ico
+client/*.webmanifest
+client/browserconfig.xml
+client/*.svg
+
+# .env file
+.env

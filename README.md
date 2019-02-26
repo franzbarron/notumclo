@@ -10,18 +10,18 @@ database).
 - Users can create posts
   - Posts may be Text, Picture, Quote, Audio, Video, or Chat
 - Users may add tags to posts to group topics together
+- User accounts
+  - Sign Up and Login
+  - Make it as secure as possible
+- User profiles
+  - Show only posts of a given user
 
 ### Future
 
 - Missing post types available in tumblr:
   - Link
+- Add more customizability to user profiles
 - Search for posts
-- User accounts
-  - Sign Up and Login
-  - Make it as secure as possible
-- User profiles
-  - Next logical step if accounts are added
-  - Show only posts of a given user
 - User mentions
 - User following
   - Show only posts from followed users appear on the main site

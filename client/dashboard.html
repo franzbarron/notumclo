@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>notumclo</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+      integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
+      crossorigin="anonymous"
+    /> -->
+    <!-- local bootstrap and fontawesome -->
+    <link rel="stylesheet" href="css/all.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+  </head>
+  <body>
+    <div class="container-fluid text-center">
+      <h1>notumclo <small class="text-muted">| Not a Tumblr Clone</small></h1>
+    </div>
+    <div
+      id="error-alert"
+      class="alert alert-danger"
+      role="alert"
+      style="display: none;"
+    ></div>
+    <div class="row text-center" id="post-options-large">
+      <div class="col-xs"></div>
+      <div class="col-sm">
+        <span class="clickable" onclick="postTextForm()"
+          ><i class="fas fa-font fa-3x"></i><br />Text</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable" onclick="postImageForm()"
+          ><i class="fas fa-image fa-3x"></i><br />Image</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable" onclick="postQuoteForm()"
+          ><i class="fas fa-quote-right fa-3x"></i><br />Quote</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable" onclick="postChatForm()"
+          ><i class="fas fa-comment-alt fa-3x"></i><br />Chat</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable" onclick="postAudioForm()"
+          ><i class="fas fa-headphones-alt fa-3x"></i><br />Audio</span
+        >
+      </div>
+      <div class="col-sm">
+        <span class="clickable" onclick="postVideoForm()">
+          <i class="fas fa-video fa-3x"></i><br />Video</span
+        >
+      </div>
+      <div class="col-xs"></div>
+    </div>
+    <div class="container" id="post-options-small">
+      <button
+        type="button"
+        class="btn btn-primary btn-lg btn-block"
+        onclick="toggleMenu('#post-options')"
+      >
+        Create a Post
+      </button>
+      <nav class="nav flex-column" id="post-options" style="display: none;">
+        <span
+          class="nav-link"
+          onclick="toggleMenu('#post-options');postTextForm()"
+          ><i class="fas fa-font fa-sm"></i>&nbsp; Text</span
+        >
+        <span
+          class="nav-link"
+          onclick="toggleMenu('#post-options');postImageForm()"
+          ><i class="fas fa-image fa-sm"></i>&nbsp; Image</span
+        >
+        <span
+          class="nav-link"
+          onclick="toggleMenu('#post-options');postQuoteForm()"
+          ><i class="fas fa-quote-right fa-sm"></i>&nbsp; Quote</span
+        >
+        <span
+          class="nav-link"
+          onclick="toggleMenu('#post-options');postChatForm()"
+          ><i class="fas fa-comment-alt fa-sm"></i>&nbsp; Chat</span
+        >
+        <span
+          class="nav-link"
+          onclick="toggleMenu('#post-options');postAudioForm()"
+          ><i class="fas fa-headphones-alt fa-sm"></i>&nbsp; Audio</span
+        >
+        <span
+          class="nav-link"
+          onclick="toggleMenu('#post-options');postVideoForm()"
+        >
+          <i class="fas fa-video fa-sm"></i>&nbsp; Video</span
+        >
+      </nav>
+    </div>
+    <div id="forms" class="container-fluid" style="width: 75%">
+      <form id="text-form" name="text-form" style="display: none;">
+        <div class="form-group">
+          <label for="text-title">Title</label>
+          <input
+            type="text"
+            class="form-control"
+            name="text-title"
+            id="text-title"
+            placeholder="Post Title"
+          />
+        </div>
+        <div class="form-group">
+          <label for="textBody">Text</label>
+          <textarea
+            class="form-control"
+            name="text-content"
+            id="text-content"
+            rows="3"
+            placeholder="Your text here"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="text-tags">Tags</label>
+          <input
+            type="text"
+            class="form-control"
+            name="text-tags"
+            id="text-tags"
+            placeholder="#tags"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <button type="button" class="btn btn-secondary btn-cancel">
+          Discard
+        </button>
+      </form>
+      <div id="file-form-group" style="display: none;">
+        <div class="form-group custom-file">
+          <input
+            type="file"
+            name="image-file"
+            id="image-file"
+            class="custom-file-input"
+            accept="image/*"
+          />
+          <label class="custom-file-label" for="image-file">Choose file</label>
+        </div>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="hideInputElement(document.querySelector('#file-form-group'))"
+        >
+          Discard
+        </button>
+      </div>
+      <div id="preview" style="text-align: center">
+        <img src="" class="img-fluid" id="thumbnail" style="max-height:28em;" />
+      </div>
+      <form id="image-form" name="imageForm" style="display: none;">
+        <div class="form-group">
+          <label for="image-caption">Caption</label>
+          <textarea
+            class="form-control"
+            name="image-caption"
+            id="image-caption"
+            rows="3"
+            placeholder="Add a caption"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="image-tags">Tags</label>
+          <input
+            type="text"
+            class="form-control"
+            name="image-tags"
+            id="image-tags"
+            placeholder="#tags"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <button type="button" class="btn btn-secondary btn-cancel">
+          Discard
+        </button>
+      </form>
+      <form id="quote-form" name="quote-form" style="display: none;">
+        <div class="form-group">
+          <label for="quote-content">Quote</label>
+          <textarea
+            name="quote-content"
+            id="quote-content"
+            rows="1"
+            class="form-control"
+            placeholder="Quote"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="quote-source">Source</label>
+          <input
+            type="text"
+            name="quote-source"
+            id="quote-source"
+            class="form-control"
+            placeholder="Source"
+          />
+        </div>
+        <div class="form-group">
+          <label for="quote-tags">Tags</label>
+          <input
+            type="text"
+            name="quote-tags"
+            id="quote-tags"
+            class="form-control"
+            placeholder="#tags"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <button type="button" class="btn btn-secondary btn-cancel">
+          Discard
+        </button>
+      </form>
+      <form id="chat-form" name="chat-form" style="display: none;">
+        <div class="form-group">
+          <textarea
+            name="chat-content"
+            id="chat-content"
+            rows="5"
+            class="form-control card-body"
+            placeholder="Me: This is a chat
+          You: Nice"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="chat-tags">Tags</label>
+          <input
+            type="text"
+            name="chat-tags"
+            id="chat-tags"
+            class="form-control"
+            placeholder="#tags"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <button class="btn btn-secondary btn-cancel" type="button">
+          Discard
+        </button>
+      </form>
+      <div id="audio-title-input" style="display: none;">
+        <div class="form-group">
+          <label for="audio-title">Song Title</label>
+          <input
+            type="text"
+            name="audio-title"
+            id="audio-title"
+            class="form-control"
+            placeholder="Search for a song (add artist and/or album for better results)"
+          />
+        </div>
+        <button type="button" class="btn btn-primary">
+          Next
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="hideInputElement(document.querySelector('#audio-title-input'))"
+        >
+          Discard
+        </button>
+      </div>
+      <div class="text-center" id="loading-spinner" style="display: none;">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <form id="audio-form" style="display: none;">
+        <div
+          id="play-button"
+          class="embed-responsive embed-responsive-1by1 mx-auto"
+          style="display: none; max-width: 575px;"
+        >
+          <iframe
+            src=""
+            id="spotify-frame"
+            frameborder="0"
+            class="embed-responsive-item"
+            allowtransparency="true"
+            allow="encrypted-media"
+          ></iframe>
+        </div>
+        <div class="form-group">
+          <label for="audio-description">Description</label>
+          <textarea
+            name="audio-description"
+            id="audio-description"
+            rows="3"
+            class="form-control"
+            placeholder="Add a description"
+          ></textarea>
+          <label for="audio-tags">Tags</label>
+          <input
+            type="text"
+            name="audio-tags"
+            id="audio-tags"
+            class="form-control"
+            placeholder="#tags"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+        <button type="button" class="btn btn-secondary btn-cancel">
+          Discard
+        </button>
+      </form>
+      <div id="video-url" style="display: none;">
+        <div class="form-group">
+          <label for="video-url-input">Video URL</label>
+          <input
+            type="text"
+            name="video-url-input"
+            id="video-url-input"
+            class="form-control"
+            placeholder="Insert YouTube URL"
+          />
+        </div>
+        <button class="btn btn-primary" type="button">Next</button>
+        <button
+          class="btn btn-secondary"
+          onclick="hideInputElement(document.querySelector('#video-url'))"
+        >
+          Discard
+        </button>
+      </div>
+      <form id="video-form" style="display: none;">
+        <div
+          id="embeded-video"
+          class="embed-responsive embed-responsive-16by9 mx-auto"
+          style="display:none; max-width: 575px;"
+        >
+          <iframe
+            src=""
+            id="youtube-iframe"
+            class="embed-responsive-item"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="form-group">
+          <label for="video-description">Description</label>
+          <textarea
+            name="video-description"
+            id="video-description"
+            rows="3"
+            class="form-control"
+            placeholder="Add a description"
+          ></textarea>
+          <label for="video-tags">Tags</label
+          ><input
+            type="text"
+            name="video-tags"
+            id="video-tags"
+            class="form-control"
+            placeholder="#tags"
+          />
+        </div>
+        <button class="btn btn-primary" type="submit">Post</button>
+        <button class="btn btn-secondary btn-cancel" type="button">
+          Discard
+        </button>
+      </form>
+    </div>
+    <div id="posts-feed" class="container"></div>
+    <script src="postFunctions.js"></script>
+  </body>
+</html>

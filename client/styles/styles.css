@@ -1,11 +1,11 @@
 @media (min-width: 576px) {
-  #post-options-small {
+  .small-screen {
     display: none;
   }
 }
 
 @media (max-width: 575px) {
-  #post-options-large {
+  .large-screen {
     display: none;
   }
 }

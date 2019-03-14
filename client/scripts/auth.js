@@ -1,6 +1,4 @@
-let API_URL;
-
-if (!API_URL) {
+if (typeof API_URL === 'undefined') {
   API_URL =
     window.location.hostname === '127.0.0.1'
       ? 'http://127.0.0.1:5000/'

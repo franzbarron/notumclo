@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>notumclo</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles/styles.css" />
     <!-- <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
@@ -19,8 +19,8 @@
       crossorigin="anonymous"
     /> -->
     <!-- local bootstrap and fontawesome -->
-    <link rel="stylesheet" href="css/all.css" />
-    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="styles/css/all.css" />
+    <link rel="stylesheet" href="styles/css/bootstrap.css" />
     <script>
       const API_URL =
         window.location.hostname === '127.0.0.1'
@@ -46,88 +46,127 @@
     </div>
     <div class="container">
       <div class="row">
-        <div class="col" id="login-form">
-          <h3>Already have an account? Log in!</h3>
-          <form name="login" id="login">
-            <div class="form-group">
-              <label for="usermail">Username or Email</label
-              ><input
-                type="text"
-                name="usermail"
-                id="usermail"
-                class="form-control"
-                placeholder="username or email"
-              />
-            </div>
-            <div class="form-group">
-              <label for="password">Password</label
-              ><input
-                type="password"
-                name="password-login"
-                id="password-login"
-                class="form-control"
-                placeholder="password"
-              />
-            </div>
-            <div class="form-row">
-              <div class="col text-right">
-                <button type="submit" class="btn btn-primary">Log in</button>
-              </div>
-            </div>
-          </form>
+        <div class="col text-center large-screen">
+          <p class="img-fluid"><img id="demo-img" src="img/demo.gif" /></p>
         </div>
-        <div class="col" id="registration-form">
-          <h3>Don't have an acocunt? Register!</h3>
-          <form name="registration" id="registration">
-            <div class="form-group">
-              <label for="username">Username</label>
-              <input
-                type="text"
-                name="username"
-                id="username"
-                class="form-control"
-                placeholder="Username"
-              />
+        <div class="col">
+          <div class="card">
+            <div class="card-header clickable" id="login-header">
+              <h5>Log in</h5>
             </div>
-            <div class="form-group">
-              <label for="email">Email</label
-              ><input
-                type="email"
-                name="email"
-                id="email"
-                class="form-control"
-                placeholder="example@domain.com"
-              />
+            <div id="login-form">
+              <form name="login" id="login" style="padding: 1em">
+                <div class="form-group">
+                  <label for="usermail">Username or Email</label
+                  ><input
+                    type="text"
+                    name="usermail"
+                    id="usermail"
+                    class="form-control"
+                    placeholder="username or email"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="password">Password</label
+                  ><input
+                    type="password"
+                    name="password-login"
+                    id="password-login"
+                    class="form-control"
+                    placeholder="password"
+                  />
+                </div>
+                <div class="form-row">
+                  <div class="col text-right">
+                    <button type="submit" class="btn btn-primary">
+                      Log in
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
-            <div class="form-group">
-              <label for="password">Password</label
-              ><input
-                type="password"
-                name="password-registration"
-                id="password-registration"
-                class="form-control"
-                placeholder="password"
-              />
+          </div>
+          <div class="card">
+            <div class="card-header clickable" id="registration-header">
+              <h5>Register</h5>
             </div>
-            <div class="form-group">
-              <label for="password-confirmation">Confirm Password</label
-              ><input
-                type="password"
-                name="password-confirmation"
-                id="password-confirmation"
-                class="form-control"
-                placeholder="password"
-              />
+            <div id="registration-form" style="display: none;">
+              <form name="registration" id="registration" style="padding: 1em;">
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    class="form-control"
+                    placeholder="Username"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label
+                  ><input
+                    type="email"
+                    name="email"
+                    id="email"
+                    class="form-control"
+                    placeholder="example@domain.com"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="password">Password</label
+                  ><input
+                    type="password"
+                    name="password-registration"
+                    id="password-registration"
+                    class="form-control"
+                    placeholder="password"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="password-confirmation">Confirm Password</label
+                  ><input
+                    type="password"
+                    name="password-confirmation"
+                    id="password-confirmation"
+                    class="form-control"
+                    placeholder="password"
+                  />
+                </div>
+                <div class="form-row">
+                  <div class="col text-right">
+                    <button type="submit" class="btn btn-primary">
+                      Register
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
-            <div class="form-row">
-              <div class="col text-right">
-                <button type="submit" class="btn btn-primary">Register</button>
-              </div>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
-    <script src="auth.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script>
+      const LoginForm = document.querySelector('#login-form');
+      const LoginHeader = document.querySelector('#login-header');
+      const RegistrationForm = document.querySelector('#registration-form');
+      const RegistrationHeader = document.querySelector('#registration-header');
+
+      LoginHeader.addEventListener('click', event => {
+        event.stopImmediatePropagation();
+        if(LoginForm.style.display === 'none') {
+          LoginForm.style.display = '';
+          RegistrationForm.style.display = 'none';
+        }
+      });
+
+      RegistrationHeader.addEventListener('click', event => {
+        event.stopImmediatePropagation();
+        if(RegistrationForm.style.display === 'none') {
+          LoginForm.style.display = 'none';
+          RegistrationForm.style.display = '';
+        }
+      });
+    </script>
   </body>
 </html>

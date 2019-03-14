@@ -48,7 +48,7 @@ function listResutls() {
           const UserHeader = document.createElement('h5');
           const UserLink = document.createElement('a');
           UserLink.classList.add('user-link');
-          UserLink.setAttribute('href', '#');
+          UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
           UserLink.textContent = post.creator;
           UserHeader.appendChild(UserLink);
 
@@ -96,7 +96,7 @@ function listResutls() {
           const UserHeader = document.createElement('h5');
           const UserLink = document.createElement('a');
           UserLink.classList.add('user-link');
-          UserLink.setAttribute('href', '#');
+          UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
           UserLink.textContent = post.creator;
           UserHeader.appendChild(UserLink);
 
@@ -145,7 +145,7 @@ function listResutls() {
           const UserHeader = document.createElement('h5');
           const UserLink = document.createElement('a');
           UserLink.classList.add('user-link');
-          UserLink.setAttribute('href', '#');
+          UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
           UserLink.textContent = post.creator;
           UserHeader.appendChild(UserLink);
 
@@ -195,7 +195,7 @@ function listResutls() {
           const UserHeader = document.createElement('h5');
           const UserLink = document.createElement('a');
           UserLink.classList.add('user-link');
-          UserLink.setAttribute('href', '#');
+          UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
           UserLink.textContent = post.creator;
           UserHeader.appendChild(UserLink);
 
@@ -247,7 +247,7 @@ function listResutls() {
           const UserHeader = document.createElement('h5');
           const UserLink = document.createElement('a');
           UserLink.classList.add('user-link');
-          UserLink.setAttribute('href', '#');
+          UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
           UserLink.textContent = post.creator;
           UserHeader.appendChild(UserLink);
 
@@ -312,7 +312,7 @@ function listResutls() {
           const UserHeader = document.createElement('h5');
           const UserLink = document.createElement('a');
           UserLink.classList.add('user-link');
-          UserLink.setAttribute('href', '#');
+          UserLink.setAttribute('href', 'user.html?id=' + post.creatorID);
           UserLink.textContent = post.creator;
           UserHeader.appendChild(UserLink);
 

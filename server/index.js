@@ -345,7 +345,7 @@ app.post('/tag', (req, res) => {
     body += chunk.toString();
   });
   req.on('end', () => {
-    body += ')(\b|$)';
+    body += ')(\\b|$)';
     const regex = new RegExp(body, 'i');
     posts.find({ tags: { $regex: regex } }).then(posts => {
       res.json(posts);

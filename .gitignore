@@ -76,3 +76,6 @@ client/*.svg
 
 # .env file
 .env
+
+# VS Code settings
+.vscode

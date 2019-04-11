@@ -2,31 +2,44 @@ const API_URL =
   window.location.hostname === '127.0.0.1'
     ? 'http://127.0.0.1:5000/'
     : 'https://notumclo-api.glitch.me/';
+const Header = document.querySelector('#header');
 const PostsFeed = document.querySelector('#posts-feed');
-const Query = window.location.search.substring(4);
 
-fetch(API_URL + 'username', {
-  method: 'POST',
-  body: Query,
-  headers: {
-    'conten-type': 'text/plain'
-  }
+let username;
+
+fetch(API_URL + 'profile', {
+  method: 'GET',
+  credentials: 'include'
 })
-  .then(respone => respone.text())
-  .then(user => {
-    const username = user;
-    document.querySelector('title').textContent = username + ' | notumclo';
-    document.querySelector('#header').textContent = username;
+  .then(response => response.json())
+  .then(userID => {
+    fetchUserData(userID);
+    fetchUserPosts(userID);
   });
 
-listResutls();
+function fetchUserData(id) {
+  fetch(API_URL + 'user-data', {
+    method: 'POST',
+    body: id,
+    headers: {
+      'content-type': 'text/plain'
+    }
+  })
+    .then(respone => respone.json())
+    .then(UserData => {
+      const UserName = UserData.name;
+      username = UserData.username;
+      document.querySelector('title').textContent = UserName + ' | notumclo';
+      document.querySelector('#header').textContent = UserName;
+    });
+}
 
-function listResutls() {
+function fetchUserPosts(id) {
   fetch(API_URL + 'user', {
     method: 'POST',
-    body: Query,
+    body: id,
     headers: {
-      'conten-type': 'text/plain'
+      'content-type': 'text/plain'
     }
   })
     .then(respone => respone.json())
@@ -45,7 +58,6 @@ function listResutls() {
         Div.appendChild(CardBody);
         PostsFeed.appendChild(Div);
       } else {
-        posts.reverse();
         posts.forEach(post => {
           if (post.type === 'text') {
             const Card = document.createElement('div');
@@ -61,7 +73,7 @@ function listResutls() {
             const UserLink = document.createElement('a');
             UserLink.classList.add('user-link');
             UserLink.setAttribute('href', '#');
-            UserLink.textContent = post.creator;
+            UserLink.textContent = username;
             UserHeader.appendChild(UserLink);
 
             const CardTitle = document.createElement('h3');
@@ -75,7 +87,10 @@ function listResutls() {
             const PostTags = post.tags.split(' ');
             PostTags.forEach(tag => {
               const TagLink = document.createElement('a');
-              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.setAttribute(
+                'href',
+                '/search.html?q=%23' + tag.substring(1)
+              );
               TagLink.classList.add('tag-link');
               TagLink.textContent = tag + ' ';
               Tags.appendChild(TagLink);
@@ -109,7 +124,7 @@ function listResutls() {
             const UserLink = document.createElement('a');
             UserLink.classList.add('user-link');
             UserLink.setAttribute('href', '#');
-            UserLink.textContent = post.creator;
+            UserLink.textContent = username;
             UserHeader.appendChild(UserLink);
 
             const CardImg = new Image();
@@ -125,7 +140,10 @@ function listResutls() {
             const PostTags = post.tags.split(' ');
             PostTags.forEach(tag => {
               const TagLink = document.createElement('a');
-              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.setAttribute(
+                'href',
+                '/search.html?q=%23' + tag.substring(1)
+              );
               TagLink.classList.add('tag-link');
               TagLink.textContent = tag + ' ';
               Tags.appendChild(TagLink);
@@ -158,7 +176,7 @@ function listResutls() {
             const UserLink = document.createElement('a');
             UserLink.classList.add('user-link');
             UserLink.setAttribute('href', '#');
-            UserLink.textContent = post.creator;
+            UserLink.textContent = username;
             UserHeader.appendChild(UserLink);
 
             const Blockquote = document.createElement('blockquote');
@@ -176,7 +194,10 @@ function listResutls() {
             const PostTags = post.tags.split(' ');
             PostTags.forEach(tag => {
               const TagLink = document.createElement('a');
-              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.setAttribute(
+                'href',
+                '/search.html?q=%23' + tag.substring(1)
+              );
               TagLink.classList.add('tag-link');
               TagLink.textContent = tag;
               Tags.appendChild(TagLink);
@@ -208,7 +229,7 @@ function listResutls() {
             const UserLink = document.createElement('a');
             UserLink.classList.add('user-link');
             UserLink.setAttribute('href', '#');
-            UserLink.textContent = post.creator;
+            UserLink.textContent = username;
             UserHeader.appendChild(UserLink);
 
             const FrameContainer = document.createElement('div');
@@ -227,7 +248,10 @@ function listResutls() {
             const PostTags = post.tags.split(' ');
             PostTags.forEach(tag => {
               const TagLink = document.createElement('a');
-              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.setAttribute(
+                'href',
+                '/search.html?q=%23' + tag.substring(1)
+              );
               TagLink.classList.add('tag-link');
               TagLink.textContent = tag;
               Tags.appendChild(TagLink);
@@ -260,7 +284,7 @@ function listResutls() {
             const UserLink = document.createElement('a');
             UserLink.classList.add('user-link');
             UserLink.setAttribute('href', '#');
-            UserLink.textContent = post.creator;
+            UserLink.textContent = username;
             UserHeader.appendChild(UserLink);
 
             const FrameContainer = document.createElement('div');
@@ -282,7 +306,10 @@ function listResutls() {
             const PostTags = post.tags.split(' ');
             PostTags.forEach(tag => {
               const TagLink = document.createElement('a');
-              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.setAttribute(
+                'href',
+                '/search.html?q=%23' + tag.substring(1)
+              );
               TagLink.classList.add('tag-link');
               TagLink.textContent = tag;
               Tags.appendChild(TagLink);
@@ -325,7 +352,7 @@ function listResutls() {
             const UserLink = document.createElement('a');
             UserLink.classList.add('user-link');
             UserLink.setAttribute('href', '#');
-            UserLink.textContent = post.creator;
+            UserLink.textContent = username;
             UserHeader.appendChild(UserLink);
 
             for (let i = 0; i < Speakers.length; i++) {
@@ -345,7 +372,10 @@ function listResutls() {
             const PostTags = post.tags.split(' ');
             PostTags.forEach(tag => {
               const TagLink = document.createElement('a');
-              TagLink.setAttribute('href', '/tags.html?' + tag.substring(1));
+              TagLink.setAttribute(
+                'href',
+                '/search.html?q=%23' + tag.substring(1)
+              );
               TagLink.classList.add('tag-link');
               TagLink.textContent = tag + ' ';
               Tags.appendChild(TagLink);

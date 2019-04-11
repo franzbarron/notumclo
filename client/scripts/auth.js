@@ -14,10 +14,11 @@ if (Registration)
     event.stopImmediatePropagation();
 
     const RegistrationData = new FormData(Registration);
-    const Username = RegistrationData.get('username');
     const Email = RegistrationData.get('email');
+    const Name = RegistrationData.get('name');
     const Password = RegistrationData.get('password-registration');
     const PasswordConfirmation = RegistrationData.get('password-confirmation');
+    const Username = RegistrationData.get('username');
 
     if (Password !== PasswordConfirmation) {
       ErrorAlert.textContent = 'Passwords must match';
@@ -26,7 +27,7 @@ if (Registration)
         ErrorAlert.style.display = 'none';
       }, 3000);
     } else {
-      const ReqBody = { Username, Email, Password };
+      const ReqBody = { Email, Name, Password, Username };
       fetch(API_URL + 'registration', {
         method: 'POST',
         body: JSON.stringify(ReqBody),
@@ -34,10 +35,17 @@ if (Registration)
         headers: { 'content-type': 'application/json' }
       })
         .then(response => {
-          if (response.status !== 200) throw new Error('Error');
-          else window.location.href = 'dashboard.html';
+          if (response.status !== 200) {
+            console.log(response);
+            throw new Error('Error');
+          } else window.location.href = 'dashboard.html';
         })
         .catch(err => {
+          ErrorAlert.textContent = err.toString().substring(7);
+          ErrorAlert.style.display = '';
+          setTimeout(() => {
+            ErrorAlert.style.display = 'none';
+          }, 3000);
           console.error(err);
         });
     }
@@ -71,6 +79,11 @@ if (Login)
         else window.location.href = 'dashboard.html';
       })
       .catch(err => {
+        ErrorAlert.textContent = err.toString().substring(7);
+        ErrorAlert.style.display = '';
+        setTimeout(() => {
+          ErrorAlert.style.display = 'none';
+        }, 3000);
         console.error(err);
       });
   });

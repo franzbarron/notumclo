@@ -41,6 +41,12 @@
     </script>
   </head>
   <body>
+    <div
+      id="error-alert"
+      class="alert alert-danger"
+      role="alert"
+      style="display: none;"
+    ></div>
     <div class="container text-center">
       <h1>notumclo <small class="text-muted">| Not a Tumblr Clone</small></h1>
     </div>
@@ -90,8 +96,18 @@
             <div class="card-header clickable" id="registration-header">
               <h5>Register</h5>
             </div>
-            <div id="registration-form" style="display: none;">
+            <div id="registration-form">
               <form name="registration" id="registration" style="padding: 1em;">
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    class="form-control"
+                    placeholder="Name"
+                  />
+                </div>
                 <div class="form-group">
                   <label for="username">Username</label>
                   <input
@@ -146,7 +162,7 @@
       </div>
     </div>
     <script src="scripts/auth.js"></script>
-    <script>
+    <!-- <script>
       const LoginForm = document.querySelector('#login-form');
       const LoginHeader = document.querySelector('#login-header');
       const RegistrationForm = document.querySelector('#registration-form');
@@ -167,6 +183,6 @@
           RegistrationForm.style.display = '';
         }
       });
-    </script>
+    </script> -->
   </body>
 </html>

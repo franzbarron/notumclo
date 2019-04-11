@@ -18,6 +18,10 @@ blockquote p:after {
   content: close-quote;
 }
 
+nav {
+  margin-bottom: 1em;
+}
+
 .card {
   margin: 1%;
 }
@@ -36,10 +40,6 @@ blockquote p:after {
 
 .user-link {
   color: inherit;
-}
-
-#posts-feed {
-  max-width: 800px;
 }
 
 #post-options-large {

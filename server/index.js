@@ -6,9 +6,9 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const monk = require('monk');
 const multer = require('multer');
+const fetch = require('node-fetch');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
-const request = require('request');
 
 require('dotenv').config();
 
@@ -20,6 +20,9 @@ const saltRounds = 10;
 const upload = multer({ dest: '/server' });
 const users = db.get('users');
 
+// posts.remove();
+// users.remove();
+
 const handleError = (err, res) => {
   res
     .status(500)
@@ -29,7 +32,7 @@ const handleError = (err, res) => {
 
 app.use(
   cors({
-    origin: ['http://127.0.0.1:8080', 'https://notumclo.glitch.me'],
+    origin: ['http://127.0.0.1:8080', 'https://notumclo.glitch.me'], // list of allowed origins
     credentials: true
   })
 );
@@ -51,25 +54,46 @@ app.get('/dashboard', (req, res) => {
   });
 });
 
-app.get('/posts', (req, res) => {
+app.get('/profile', (req, res) => {
   const token = req.cookies.token;
-  posts.find().then(posts => {
-    jwt.verify(token, secret, (err, decoded) => {
-      if (err) return res.status(403).json({ message: 'User not authorized' });
-      res.json(posts);
-    });
+  jwt.verify(token, secret, (err, decoded) => {
+    res.json(decoded.id);
   });
 });
 
-app.post('/username', (req, res) => {
-  let user = '';
-  req.on('data', chunk => {
-    user += chunk.toString();
-  });
-  req.on('end', () => {
-    posts.findOne({ creatorID: user }).then(results => {
-      res.send(results.creator);
-    });
+app.get('/posts', (req, res) => {
+  const token = req.cookies.token;
+  jwt.verify(token, secret, (err, decoded) => {
+    if (err) return res.status(403).json({ message: 'User not authorized' });
+    else {
+      posts
+        .aggregate([
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'creatorID',
+              foreignField: '_id',
+              as: 'creatorData'
+            }
+          },
+          {
+            $project: {
+              creatorData: {
+                password: 0,
+                email: 0,
+                _id: 0
+              }
+            }
+          },
+          { $sort: { created: -1 } }
+        ])
+        .then(results => {
+          res.json(results);
+        });
+      // posts.find().then(posts => {
+      //   res.json(posts);
+      // });
+    }
   });
 });
 
@@ -80,21 +104,18 @@ app.get('/users', (req, res) => {
 });
 
 app.get('/spotify', (req, res) => {
-  const Headers = {
-    Authorization: 'Basic ' + process.env.SPOTIFY, // <base64 encoded client_id:client_secret> More info here: https://developer.spotify.com/documentation/general/guides/authorization-guide/#client-credentials-flow
-    'Content-Type': 'application/x-www-form-urlencoded'
-  };
-  const DataString = 'grant_type=client_credentials';
-  const Options = {
-    url: 'https://accounts.spotify.com/api/token',
+  fetch('https://accounts.spotify.com/api/token', {
     method: 'POST',
-    headers: Headers,
-    body: DataString
-  };
-
-  request(Options, (error, response, body) => {
-    if (!error && response.statusCode === 200) res.json(JSON.parse(body));
-  });
+    body: 'grant_type=client_credentials',
+    headers: {
+      Authorization: 'Basic ' + process.env.SPOTIFY, // <base64 encoded client_id:client_secret> More info here: https://developer.spotify.com/documentation/general/guides/authorization-guide/#client-credentials-flow
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+    .then(response => response.json())
+    .then(response => {
+      res.json(response);
+    });
 });
 
 app.listen(5000, () => {
@@ -169,74 +190,70 @@ function isValidPost(post) {
 
 function isValidRegRequest(regRequest) {
   return (
-    regRequest.Username &&
     regRequest.Email &&
+    regRequest.Name &&
     regRequest.Password &&
-    regRequest.Username.toString().trim() &&
+    regRequest.Username &&
     regRequest.Email.toString().trim() &&
-    regRequest.Password.toString().trim()
+    regRequest.Name.toString().trim() &&
+    regRequest.Password.toString().trim() &&
+    regRequest.Username.toString().trim()
   );
 }
 
 function parsePost(post, id, username) {
   if (post.type === 'text')
     return {
-      title: post.TextTitle.toString(),
       content: post.TextContent.toString(),
-      tags: post.TextTags.toString(),
-      type: 'text',
       created: new Date(),
-      creatorID: id,
-      creator: username
+      creatorID: monk.id(id),
+      tags: post.TextTags.toString(),
+      title: post.TextTitle.toString(),
+      type: 'text'
     };
   else if (post.type === 'image')
     return {
-      file: post.ImgURL.toString(),
       caption: post.ImageCaption.toString(),
-      tags: post.ImageTags.toString(),
-      type: 'image',
       created: new Date(),
-      creatorID: id,
-      creator: username
+      creatorID: monk.id(id),
+      file: post.ImgURL.toString(),
+      tags: post.ImageTags.toString(),
+      type: 'image'
     };
   else if (post.type === 'quote')
     return {
       content: post.QuoteContent.toString(),
+      created: new Date(),
+      creatorID: monk.id(id),
       source: post.QuoteSource.toString(),
       tags: post.QuoteTags.toString(),
-      type: 'quote',
-      created: new Date(),
-      creatorID: id,
-      creator: username
+      type: 'quote'
     };
   else if (post.type === 'audio')
     return {
-      source: post.PlayButtonSrc.toString(),
-      description: post.AudioDescription.toString(),
-      tags: post.AudioTags.toString(),
-      type: 'audio',
       created: new Date(),
-      creatorID: id,
-      creator: username
+      creatorID: monk.id(id),
+      description: post.AudioDescription.toString(),
+      source: post.PlayButtonSrc.toString(),
+      tags: post.AudioTags.toString(),
+      type: 'audio'
     };
   else if (post.type === 'video')
     return {
-      source: post.URL.toString(),
-      description: post.VideoDescription.toString(),
-      tags: post.VideoTags.toString(),
-      type: 'video',
       created: new Date(),
-      creatorID: id,
-      creator: username
+      creatorID: monk.id(id),
+      description: post.VideoDescription.toString(),
+      source: post.URL.toString(),
+      tags: post.VideoTags.toString(),
+      type: 'video'
     };
   else if (post.type === 'chat')
     return {
       content: post.ChatContent.toString(),
-      tags: post.ChatTags.toString(),
-      type: 'chat',
       created: new Date(),
-      creatorID: id,
-      creator: username
+      creatorID: monk.id(id),
+      tags: post.ChatTags.toString(),
+      type: 'chat'
     };
 }
 
@@ -257,7 +274,7 @@ app.post('/img', upload.single('file'), (req, res) => {
 
 app.post('/login', (req, res) => {
   if (isValidLoginRequest(req.body)) {
-    const usermail = req.body.usermail.toString();
+    const usermail = req.body.usermail.toString().toLowerCase();
     const password = req.body.password.toString();
     const type = req.body.type.toString();
 
@@ -305,33 +322,39 @@ app.post('/login', (req, res) => {
 
 app.post('/registration', (req, res) => {
   if (isValidRegRequest(req.body)) {
-    const username = req.body.Username.toString();
-    const email = req.body.Email.toString();
+    const email = req.body.Email.toString().toLowerCase();
+    const name = req.body.Name.toString();
     const password = req.body.Password.toString();
+    const username = req.body.Username.toString().toLowerCase();
 
     users.find({ username: username }).then(results => {
       if (results.length > 0) {
         res.status(409);
         res.json({ message: 'An account with this username already exists' });
-      }
-    });
-
-    users.find({ email: email }).then(results => {
-      if (results.length > 0) {
-        res.status(409);
-        res.json({ message: 'An account with this email already exists' });
-      }
-    });
-
-    bcrypt.hash(password, saltRounds, (err, hash) => {
-      users.insert({ username, email, password: hash }).then(createdUser => {
-        const userId = createdUser._id;
-        const token = jwt.sign({ id: userId }, secret, {
-          expiresIn: 604800000
+      } else {
+        users.find({ email: email }).then(results => {
+          if (results.length > 0) {
+            res.status(409);
+            res.json({ message: 'An account with this email already exists' });
+          } else {
+            bcrypt.hash(password, saltRounds, (err, hash) => {
+              users
+                .insert({ email, name, username, password: hash })
+                .then(createdUser => {
+                  const userId = createdUser._id;
+                  const token = jwt.sign({ id: userId }, secret, {
+                    expiresIn: 604800000
+                  });
+                  res.cookie('token', token, {
+                    maxAge: 604800000,
+                    httpOnly: false
+                  });
+                  res.status(200).send(token);
+                });
+            });
+          }
         });
-        res.cookie('token', token, { maxAge: 604800000, httpOnly: false });
-        res.status(200).send(token);
-      });
+      }
     });
   } else {
     res.status(422);
@@ -339,16 +362,107 @@ app.post('/registration', (req, res) => {
   }
 });
 
-app.post('/tag', (req, res) => {
-  let body = '#(';
-  req.on('data', chunk => {
-    body += chunk.toString();
+app.post('/search/all', (req, res) => {
+  const QueryRegex = new RegExp(req.body.query.toString(), 'i');
+
+  users.find({ username: { $regex: QueryRegex } }).then(results => {
+    let userIDs = [];
+    results.forEach(result => {
+      userIDs.push(monk.id(result._id));
+    });
+    posts
+      .aggregate([
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'creatorID',
+            foreignField: '_id',
+            as: 'creatorData'
+          }
+        },
+        {
+          $match: {
+            $or: [
+              { caption: { $regex: QueryRegex } },
+              { content: { $regex: QueryRegex } },
+              { creatorID: { $in: userIDs } },
+              { description: { $regex: QueryRegex } },
+              { source: { $regex: QueryRegex } },
+              { tags: { $regex: QueryRegex } },
+              { title: { $regex: QueryRegex } }
+            ]
+          }
+        },
+        {
+          $project: {
+            creatorData: {
+              password: 0,
+              email: 0,
+              _id: 0
+            }
+          }
+        },
+        { $sort: { created: -1 } }
+      ])
+      .then(results => {
+        res.json(results);
+      });
   });
-  req.on('end', () => {
-    body += ')(\\b|$)';
-    const regex = new RegExp(body, 'i');
-    posts.find({ tags: { $regex: regex } }).then(posts => {
-      res.json(posts);
+});
+
+app.post('/search/people', (req, res) => {
+  const QueryRegex = new RegExp(req.body.query.toString(), 'i');
+  users
+    .find({
+      $or: [
+        { name: { $regex: QueryRegex } },
+        { username: { $regex: QueryRegex } }
+      ]
+    })
+    .then(queryResults => {
+      res.json(queryResults);
+    });
+});
+
+app.post('/update', (req, res) => {
+  let update = {};
+  update[req.body.field] = req.body.value;
+
+  if (req.body.field === 'username' || req.body.field === 'email') {
+    users.find(update).then(result => {
+      if (result.length > 0) {
+        res.status(409);
+        res.json({
+          message: 'An account with this ' + req.body.field + ' already exists'
+        });
+      } else {
+        users.update({ _id: monk.id(req.body.id) }, { $set: update });
+
+        res.status(200).json({ message: 'User updated successfully' });
+      }
+    });
+  } else {
+    users.update({ _id: monk.id(req.body.id) }, { $set: update });
+
+    res.status(200).json({ message: 'user updated successfully' });
+  }
+});
+
+app.post('/update-password', (req, res) => {
+  users.findOne(req.body.id).then(result => {
+    bcrypt.compare(req.body.current, result.password, (err, same) => {
+      if (same) {
+        bcrypt.hash(req.body.new, saltRounds, (err, hash) => {
+          users.update(
+            { _id: monk.id(req.body.id) },
+            { $set: { password: hash } }
+          );
+
+          res.status(200).json({ message: 'success' });
+        });
+      } else {
+        res.status(401).json({ message: 'Incorrect Password' });
+      }
     });
   });
 });
@@ -359,8 +473,21 @@ app.post('/user', (req, res) => {
     user += chunk.toString();
   });
   req.on('end', () => {
-    posts.find({ creatorID: user }).then(posts => {
+    const id = monk.id(user);
+    posts.find({ creatorID: id }, { sort: { created: -1 } }).then(posts => {
       res.json(posts);
+    });
+  });
+});
+
+app.post('/user-data', (req, res) => {
+  let user = '';
+  req.on('data', chunk => {
+    user += chunk.toString();
+  });
+  req.on('end', () => {
+    users.findOne({ _id: user }).then(results => {
+      res.send(results);
     });
   });
 });

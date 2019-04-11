@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>notumclo</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
+    <!-- <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+      integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
+      crossorigin="anonymous"
+    /> -->
+    <!-- local bootstrap and fontawesome -->
+    <link rel="stylesheet" href="styles/css/all.css" />
+    <link rel="stylesheet" href="styles/css/bootstrap.css" />
+    <link rel="stylesheet" href="styles/styles.css" />
+  </head>
+  <body>
+    <nav
+      class="navbar navbar-expand sticky-top navbar-dark bg-dark large-screen"
+    >
+      <a href="dashboard.html" class="navbar-brand"
+        >notumclo <small class="text-muted">| Not a Tumblr Clone</small></a
+      >
+      <form class="mx-2 my-auto d-inline w-100">
+        <div class="input-group">
+          <input
+            class="form-control border border-right-0"
+            id="search-input-lg"
+            placeholder="Search"
+            type="search"
+          />
+          <span class="input-group-append">
+            <button
+              class="btn btn-outline-secondary border border-left-0"
+              id="search-button-lg"
+              type="submit"
+            >
+              <i class="fa fa-search"></i>
+            </button>
+          </span>
+        </div>
+      </form>
+      <ul class="navbar-nav">
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="notifications.html"
+            ><i class="fas fa-bell"></i
+          ></a>
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" href="profile.html"
+            ><i class="fas fa-user"></i
+          ></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="settings.html"
+            ><i class="fas fa-cog"></i
+          ></a>
+        </li>
+      </ul>
+    </nav>
+    <nav
+      class="navbar navbar-expand sticky-top navbar-dark bg-dark small-screen"
+    >
+      <a href="dashboard.html" class="navbar-brand">notumclo</a>
+      <ul class="navbar-nav ml-auto">
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="notifications.html"
+            ><i class="fas fa-bell"></i
+          ></a>
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" href="profile.html"
+            ><i class="fas fa-user"></i
+          ></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="settings.html"
+            ><i class="fas fa-cog"></i
+          ></a>
+        </li>
+      </ul>
+    </nav>
+    <div class="small-screen" style="margin-bottom: 1em;">
+      <form class="my-auto d-inline w-100">
+        <div class="input-group">
+          <input
+            class="form-control border border-right-0"
+            id="search-input-sm"
+            placeholder="Search"
+            type="search"
+          />
+          <span class="input-group-append">
+            <button
+              class="btn btn-outline-secondary border border-left-0"
+              id="search-button-sm"
+              type="submit"
+            >
+              <i class="fa fa-search"></i>
+            </button>
+          </span>
+        </div>
+      </form>
+    </div>
+    <div class="container" role="tabpanel" id="tabpanel">
+      <div class="row">
+        <div class="col-10">
+          <h3 id="header"></h3>
+        </div>
+        <div class="col-2 text-right small-screen">
+          <button class="btn btn-dark" type="button" id="filter-btn">
+            <i class="fas fa-sliders-h"></i>
+          </button>
+        </div>
+      </div>
+      <ul
+        class="nav nav-tabs large-screen"
+        id="myTab"
+        role="tablist"
+        style="margin-bottom: 1rem"
+      >
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            id="latest-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#latest"
+            role="tab"
+            aria-controls="latest"
+            aria-selected="true"
+          >
+            Latest
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="people-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#people"
+            role="tab"
+            aria-controls="people"
+            aria-selected="false"
+            >People
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="text-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#text"
+            role="tab"
+            aria-controls="text"
+            aria-selected="false"
+            >Text
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="image-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#image"
+            role="tab"
+            aria-controls="image"
+            aria-selected="false"
+            >Image
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="quote-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#quote"
+            role="tab"
+            aria-controls="quote"
+            aria-selected="false"
+            >Quote
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="chat-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#chat"
+            role="tab"
+            aria-controls="chat"
+            aria-selected="false"
+            >Chat
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="audio-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#audio"
+            role="tab"
+            aria-controls="audio"
+            aria-selected="false"
+            >Audio
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="ideo-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#video"
+            role="tab"
+            aria-controls="video"
+            aria-selected="false"
+            >Video
+          </a>
+        </li>
+      </ul>
+      <ul
+        class="nav flex-column small-screen"
+        id="filter-menu"
+        style="margin-bottom: 1rem; display: none;"
+      >
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            id="latest-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#latest"
+            role="tab"
+            aria-controls="latest"
+            aria-selected="true"
+          >
+            Latest
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="people-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#people"
+            role="tab"
+            aria-controls="people"
+            aria-selected="false"
+            >People
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="text-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#text"
+            role="tab"
+            aria-controls="text"
+            aria-selected="false"
+            >Text
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="image-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#image"
+            role="tab"
+            aria-controls="image"
+            aria-selected="false"
+            >Image
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="quote-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#quote"
+            role="tab"
+            aria-controls="quote"
+            aria-selected="false"
+            >Quote
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="chat-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#chat"
+            role="tab"
+            aria-controls="chat"
+            aria-selected="false"
+            >Chat
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="audio-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#audio"
+            role="tab"
+            aria-controls="audio"
+            aria-selected="false"
+            >Audio
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="ideo-tab"
+            data-toggle="tab"
+            data-duration="350"
+            data-height="true"
+            href="#video"
+            role="tab"
+            aria-controls="video"
+            aria-selected="false"
+            >Video
+          </a>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          role="tabpanel"
+          class="tab-pane fade active show"
+          id="latest"
+          aria-labelledby="latest-tab"
+        ></div>
+        <div
+          class="tab-pane fade "
+          id="people"
+          role="tabpanel"
+          aria-labelledby="people-tab"
+        ></div>
+        <div
+          class="tab-pane fade "
+          id="text"
+          role="tabpanel"
+          aria-labelledby="text-tab"
+        ></div>
+        <div
+          class="tab-pane fade "
+          id="image"
+          role="tabpanel"
+          aria-labelledby="image-tab"
+        ></div>
+        <div
+          class="tab-pane fade "
+          id="quote"
+          role="tabpanel"
+          aria-labelledby="quote-tab"
+        ></div>
+        <div
+          class="tab-pane fade "
+          id="chat"
+          role="tabpanel"
+          aria-labelledby="chat-tab"
+        ></div>
+        <div
+          class="tab-pane fade "
+          id="audio"
+          role="tabpanel"
+          aria-labelledby="audio-tab"
+        ></div>
+        <div
+          class="tab-pane fade "
+          id="video"
+          role="tabpanel"
+          aria-labelledby="video-tab"
+        ></div>
+      </div>
+    </div>
+    <script src="scripts/tab.js"></script>
+    <script src="scripts/search.js"></script>
+  </body>
+</html>
